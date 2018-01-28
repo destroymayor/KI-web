@@ -1,13 +1,12 @@
 const express = require("express");
 const path = require("path");
-const bodyParser = require("body-parser");
 const routes = require("./server/route");
 const compression = require("compression");
 
 const app = express();
 
-app.use(bodyParser.json());
 app.use(compression());
+app.disable("etag");
 app.use(express.static(path.join(__dirname, "client/build")));
 
 routes(app);

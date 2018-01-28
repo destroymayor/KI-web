@@ -18,13 +18,17 @@ class App extends Component {
     //下拉組件集合
     SourceTextSelectItem: [],
     //下拉組件初始化String
-    SourceTextSelectedOption: "第1篇",
+    SourceTextSelectedOption: "1",
     //讀取tx庫
     SourceText: "",
     //讀取tx字元位置
     SourceTextLocalTags: "",
     //讀取kw歷史庫
     KwHistory: [],
+    //jieba
+    jiebaList: [],
+    jiebaLoadingState: false,
+    FetchjiebaListDisabledState: true,
     //復原Ur標註
     UrTagRecovery: "",
     //人工標記集合
@@ -42,7 +46,6 @@ class App extends Component {
     this.ref = FireBaseApp.database();
     //連接SourceText庫
     this.ref.ref("SourceText/").on("value", this._FetchSourceText);
-    this.fetch_jieba();
   }
 
   componentWillUnmount() {
@@ -54,15 +57,10 @@ class App extends Component {
   }
 
   fetch_jieba() {
-    fetch("/jieba?page=1")
-      .then(response => {
-        response.json();
-      })
+    fetch("/jieba?page=" + this.state.SourceTextSelectedOption)
+      .then(res => res.json())
       .then(result => {
-        console.log(result);
-      })
-      .catch(error => {
-        console.log(error);
+        this.setState({ jiebaList: result, jiebaLoadingState: true, FetchjiebaListDisabledState: true });
       });
   }
 
@@ -74,7 +72,7 @@ class App extends Component {
     });
 
     SourceTextArray.forEach((value, index) => {
-      this.state.SourceTextSelectItem.push({ value: value, label: `第${index + 1}篇` });
+      this.state.SourceTextSelectItem.push({ value: value, label: index + 1 });
     });
 
     this.setState({
@@ -82,6 +80,8 @@ class App extends Component {
       SourceTextLoadingState: true,
       //open 讀取歷史kw庫按鈕
       FetchKeyWordHistoryDisabledState: false,
+      //open jieba 按鈕狀態
+      FetchjiebaListDisabledState: false,
       SourceText: SourceTextArray[0],
       //標出tx庫位置的集合
       SourceTextLocalTags: SourceTextArray[0]
@@ -89,13 +89,13 @@ class App extends Component {
   };
 
   //讀取歷史kw庫資料
-  _FetchKeyWordHistory = snapshot => {
+  _FetchKeyWordHistory = async snapshot => {
     const KwHistoryArray = [];
-    snapshot.forEach(val => {
+    await snapshot.forEach(val => {
       KwHistoryArray.push(val.val());
     });
 
-    this.setState({
+    await this.setState({
       //儲存kw歷史庫
       KwHistory: KwHistoryArray,
       //讀取歷史kw庫並標出顏色(綠色)
@@ -116,7 +116,10 @@ class App extends Component {
       SourceTextSelectedOption: selectValue.label,
       KwTotal: [],
       //open 讀取kw按鈕狀態
-      FetchKeyWordHistoryDisabledState: false
+      FetchKeyWordHistoryDisabledState: false,
+      //open jieba 按鈕狀態
+      FetchjiebaListDisabledState: false,
+      jiebaList: []
     });
   };
 
@@ -199,7 +202,7 @@ class App extends Component {
 
         <Buttons
           disabled={this.state.FetchKeyWordHistoryDisabledState}
-          Text={"讀取Kw庫"}
+          Text={"讀取歷史Kw庫"}
           onClick={() => {
             this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
             this.setState({ CalculateFrequencyDisabledState: false });
@@ -213,10 +216,28 @@ class App extends Component {
             this.CalculateFrequency();
           }}
         />
+        <Buttons
+          disabled={this.state.FetchjiebaListDisabledState}
+          Text={"讀取pkw庫"}
+          onClick={() => {
+            this.fetch_jieba();
+          }}
+        />
+        <Buttons
+          Text={"新增標記"}
+          onClick={() => {
+            this.InsertTextTag();
+          }}
+        />
+        <Buttons
+          Text={"復原標記"}
+          onClick={() => {
+            this.RemoveTextTagRange();
+          }}
+        />
 
         <div>
-          <h2>Kw庫</h2>
-          <ul id="KwItem">
+          <ul className="List_ul">
             {this.state.KwTotal.map((val, index) => (
               <li key={index}>
                 {val.frequency > 0 ? (
@@ -232,20 +253,19 @@ class App extends Component {
               </li>
             ))}
           </ul>
+          {this.state.jiebaLoadingState ? (
+            <ul className="List_ul">
+              {this.state.jiebaList.map((value, index) => {
+                return (
+                  <li key={index}>
+                    pkw：{value.word}
+                    {`  > 權重值：${value.weight}`}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : null}
         </div>
-
-        <Buttons
-          Text={"新增標記"}
-          onClick={() => {
-            this.InsertTextTag();
-          }}
-        />
-        <Buttons
-          Text={"復原標記"}
-          onClick={() => {
-            this.RemoveTextTagRange();
-          }}
-        />
       </div>
     );
   }
