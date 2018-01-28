@@ -8,6 +8,9 @@ import { Icon } from "antd";
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 
+import ReactTable from "react-table";
+import "react-table/react-table.css";
+
 import FireBaseApp from "../db/firebaseAPI";
 import Buttons from "./components/Buttons";
 
@@ -35,6 +38,7 @@ class App extends Component {
     GetSelectedTextList: [],
     //kw參數的List
     KwTotal: [],
+    KwTotalLoadingState: false,
     //讀取歷史kw庫按鈕狀態
     FetchKeyWordHistoryDisabledState: true,
     //kw計算頻率按鈕狀態
@@ -60,7 +64,21 @@ class App extends Component {
     fetch("/jieba?page=" + this.state.SourceTextSelectedOption)
       .then(res => res.json())
       .then(result => {
-        this.setState({ jiebaList: result, jiebaLoadingState: true, FetchjiebaListDisabledState: true });
+        result.map((value, index) => {
+          return this.setState({
+            SourceText: this.state.SourceText.replace(
+              new RegExp(value.word, "g"),
+              val => `<span style="color:#2897ff;">${val}</span>`
+            )
+          });
+        });
+
+        this.setState({
+          jiebaList: result,
+          jiebaLoadingState: true,
+          FetchjiebaListDisabledState: true
+        });
+        console.log(result);
       });
   }
 
@@ -101,7 +119,7 @@ class App extends Component {
       //讀取歷史kw庫並標出顏色(綠色)
       SourceText: this.state.SourceText.replace(
         new RegExp(KwHistoryArray.join("|"), "g"),
-        val => `<span style="color:#2897ff;">${val}</span>`
+        val => `<span style="color:#00A600;">${val}</span>`
       ),
       //close 讀取歷史kw庫按鈕
       FetchKeyWordHistoryDisabledState: true
@@ -115,32 +133,32 @@ class App extends Component {
       SourceTextLocalTags: selectValue.value,
       SourceTextSelectedOption: selectValue.label,
       KwTotal: [],
+      KwTotalLoadingState: false,
       //open 讀取kw按鈕狀態
       FetchKeyWordHistoryDisabledState: false,
       //open jieba 按鈕狀態
       FetchjiebaListDisabledState: false,
-      jiebaList: []
+      jiebaList: [],
+      jiebaLoadingState: false
     });
   };
 
   //計算文章出現kw頻率
   CalculateFrequency() {
     this.state.KwHistory.forEach((value, index) => {
+      const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
       this.state.KwTotal.push({
         //kw
-        Kw: value,
+        Kw: frequencyState ? null : value,
         //出現頻率
-        frequency:
-          this.state.SourceText.match(new RegExp(value, "g") || []) === null
-            ? 0
-            : this.state.SourceText.match(new RegExp(value, "g") || []).length,
+        frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
         //出現位置字元
-        Localtag: this.state.SourceTextLocalTags.indexOf(value)
+        Localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
       });
     });
 
     //close 計算頻率按鈕
-    this.setState({ CalculateFrequencyDisabledState: true });
+    this.setState({ CalculateFrequencyDisabledState: true, KwTotalLoadingState: true });
     this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
   }
 
@@ -149,7 +167,7 @@ class App extends Component {
     let Selection = window.getSelection().getRangeAt(0);
     let SelectedText = Selection.extractContents();
     let SelectSpan = document.createElement("span");
-    SelectSpan.style.backgroundColor = "#FF2D2D";
+    SelectSpan.style.backgroundColor = "#EA0000";
     SelectSpan.appendChild(SelectedText);
     Selection.insertNode(SelectSpan);
 
@@ -235,40 +253,91 @@ class App extends Component {
             this.RemoveTextTagRange();
           }}
         />
+        {this.state.KwTotalLoadingState ? (
+          <ReactTable
+            data={this.state.KwTotal}
+            columns={[
+              {
+                Header: "Kw",
+                columns: [
+                  {
+                    Header: "關鍵字",
+                    accessor: "Kw"
+                  },
+                  {
+                    Header: "出現頻率",
+                    accessor: "frequency"
+                  },
+                  {
+                    Header: "初始位置",
+                    accessor: "Localtag"
+                  }
+                ]
+              }
+            ]}
+            defaultPageSize={20}
+            className="-striped -highlight"
+          />
+        ) : null}
 
-        <div>
-          <ul className="List_ul">
-            {this.state.KwTotal.map((val, index) => (
-              <li key={index}>
-                {val.frequency > 0 ? (
-                  <span>
-                    {val.Kw}
-                    <span style={{ color: val.frequency > 0 ? "#2897ff" : "#222222" }}>
-                      {` >出現${val.frequency}次  ${
-                        val.Localtag !== -1 ? `，初始位置在第${val.Localtag}字元` : ""
-                      }`}
-                    </span>
-                  </span>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-          {this.state.jiebaLoadingState ? (
-            <ul className="List_ul">
-              {this.state.jiebaList.map((value, index) => {
-                return (
-                  <li key={index}>
-                    pkw：{value.word}
-                    {`  > 權重值：${value.weight}`}
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
-        </div>
+        {this.state.jiebaLoadingState ? (
+          <div>
+            <ReactTable
+              data={this.state.jiebaList}
+              columns={[
+                {
+                  Header: "pKw",
+                  columns: [
+                    {
+                      Header: "關鍵字",
+                      accessor: "word"
+                    },
+                    {
+                      Header: "權重值",
+                      accessor: "weight"
+                    }
+                  ]
+                }
+              ]}
+              defaultPageSize={20}
+              className="-striped -highlight"
+            />
+          </div>
+        ) : null}
       </div>
     );
   }
 }
 
 export default App;
+
+// <div>
+//           <ul className="List_ul">
+//             {this.state.KwTotal.map((val, index) => (
+//               <li key={index}>
+//                 {val.frequency > 0 ? (
+//                   <span>
+//                     {val.Kw}
+//                     <span style={{ color: val.frequency > 0 ? "#00A600" : "#222222" }}>
+//                       {` >出現${val.frequency}次  ${
+//                         val.Localtag !== -1 ? `，初始位置在第${val.Localtag}字元` : ""
+//                       }`}
+//                     </span>
+//                   </span>
+//                 ) : null}
+//               </li>
+//             ))}
+//           </ul>
+//           {this.state.jiebaLoadingState ? (
+//             <ul className="List_ul">
+//               {this.state.jiebaList.map((value, index) => {
+//                 return (
+//                   <li key={index}>
+//                     pkw：{value.word}
+//                     {`  > 權重值：${value.weight}`}
+//                   </li>
+//                 );
+//               })}
+//             </ul>
+//           ) : null}
+//         </div>
