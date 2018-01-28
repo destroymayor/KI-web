@@ -1,0 +1,52 @@
+/* 引入ant樣式組件 */
+@import "~antd/dist/antd.css";
+
+.Index {
+  text-align: center;
+}
+
+.Index-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.Index-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.Index-title {
+  font-size: 1.5em;
+  color: #ffffff;
+}
+
+.Index-intro {
+  font-size: large;
+}
+
+#SourceText {
+  margin: 20px;
+}
+
+#SourceTextItem {
+  color: #222;
+}
+
+#KwItem {
+  list-style: none;
+}
+
+.KI_touch {
+  margin: 10px;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
