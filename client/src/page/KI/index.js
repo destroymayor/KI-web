@@ -125,7 +125,7 @@ export default class KI extends Component {
           return value.Kw !== null;
         })
       });
-    }, 200);
+    }, 500);
 
     //close loading 按鈕
     this.setState({ KwTotalLoadingState: true });

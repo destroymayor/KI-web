@@ -1,11 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import { unregister as unregisterServiceWorker } from "./registerServiceWorker";
+
 import "./index.css";
 import App from "./page/index";
-
-import { BrowserRouter } from "react-router-dom";
-
-import { unregister as unregisterServiceWorker } from "./registerServiceWorker";
 
 ReactDOM.render(
   <BrowserRouter>
