@@ -2,7 +2,10 @@
 @import "~antd/dist/antd.css";
 
 .Index {
+  display: flex;
+  flex-direction: column;
   text-align: center;
+  justify-content: center;
 }
 
 .Index-logo {
@@ -26,6 +29,7 @@
   font-size: large;
 }
 
+/* tx庫 */
 #SourceText {
   margin: 20px;
 }
@@ -34,12 +38,34 @@
   color: #222;
 }
 
-.List_ul {
-  list-style: none;
+/* 下拉組件 */
+
+.SelectComponent {
+  display: flex;
+  justify-content: center;
 }
 
-.KI_touch {
+.ReactSelect {
+  width: 40%;
+}
+
+/* 按鈕item */
+.ButtonItem button {
   margin: 10px;
+}
+
+/* Table */
+.TableComponent {
+  display: flex;
+  justify-content: center;
+}
+
+.kwTable {
+  margin: 20px;
+}
+
+.pkwTable {
+  margin: 20px;
 }
 
 @keyframes App-logo-spin {

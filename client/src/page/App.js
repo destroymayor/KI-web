@@ -78,7 +78,6 @@ class App extends Component {
           jiebaLoadingState: true,
           FetchjiebaListDisabledState: true
         });
-        console.log(result);
       });
   }
 
@@ -157,6 +156,7 @@ class App extends Component {
       });
     });
 
+    //過濾null值
     this.setState({
       KwTotal: this.state.KwTotal.filter(value => {
         return value.Kw !== null;
@@ -202,14 +202,55 @@ class App extends Component {
           <h1 className="Index-title">KI for Web</h1>
         </header>
         <h2>SourceText庫</h2>
-        <Select
-          placeholder={this.state.SourceTextSelectedOption}
-          name="form-field-name"
-          value={this.state.SourceTextSelectedOption}
-          onChange={this.HandleSelect}
-          options={this.state.SourceTextSelectItem}
-          autoFocus
-        />
+
+        <div className="SelectComponent">
+          <Select
+            className="ReactSelect"
+            placeholder={this.state.SourceTextSelectedOption}
+            name="form-field-name"
+            value={this.state.SourceTextSelectedOption}
+            onChange={this.HandleSelect}
+            options={this.state.SourceTextSelectItem}
+            autoFocus
+          />
+        </div>
+        <div className="ButtonItem">
+          <Buttons
+            disabled={this.state.FetchKeyWordHistoryDisabledState}
+            Text={"讀取歷史Kw庫"}
+            onClick={() => {
+              this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
+              this.setState({ CalculateFrequencyDisabledState: false });
+            }}
+          />
+          <Buttons
+            disabled={this.state.CalculateFrequencyDisabledState}
+            Type={"Default"}
+            Text={"Kw重複頻率及位置"}
+            onClick={() => {
+              this.CalculateFrequency();
+            }}
+          />
+          <Buttons
+            disabled={this.state.FetchjiebaListDisabledState}
+            Text={"讀取pkw庫"}
+            onClick={() => {
+              this.fetch_jieba();
+            }}
+          />
+          <Buttons
+            Text={"新增標記"}
+            onClick={() => {
+              this.InsertTextTag();
+            }}
+          />
+          <Buttons
+            Text={"復原標記"}
+            onClick={() => {
+              this.RemoveTextTagRange();
+            }}
+          />
+        </div>
 
         <div id="SourceText">
           {this.state.SourceTextLoadingState ? (
@@ -223,93 +264,61 @@ class App extends Component {
           )}
         </div>
 
-        <Buttons
-          disabled={this.state.FetchKeyWordHistoryDisabledState}
-          Text={"讀取歷史Kw庫"}
-          onClick={() => {
-            this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
-            this.setState({ CalculateFrequencyDisabledState: false });
-          }}
-        />
-        <Buttons
-          disabled={this.state.CalculateFrequencyDisabledState}
-          Type={"Default"}
-          Text={"Kw重複頻率及位置"}
-          onClick={() => {
-            this.CalculateFrequency();
-          }}
-        />
-        <Buttons
-          disabled={this.state.FetchjiebaListDisabledState}
-          Text={"讀取pkw庫"}
-          onClick={() => {
-            this.fetch_jieba();
-          }}
-        />
-        <Buttons
-          Text={"新增標記"}
-          onClick={() => {
-            this.InsertTextTag();
-          }}
-        />
-        <Buttons
-          Text={"復原標記"}
-          onClick={() => {
-            this.RemoveTextTagRange();
-          }}
-        />
-        {this.state.KwTotalLoadingState ? (
-          <ReactTable
-            data={this.state.KwTotal}
-            showPagination={false}
-            // defaultPageSize={1}
-            columns={[
-              {
-                Header: "Kw",
-                columns: [
-                  {
-                    Header: "關鍵字",
-                    accessor: "Kw"
-                  },
-                  {
-                    Header: "出現頻率",
-                    accessor: "frequency"
-                  },
-                  {
-                    Header: "初始位置",
-                    accessor: "Localtag"
-                  }
-                ]
-              }
-            ]}
-            className="-striped -highlight"
-          />
-        ) : null}
-
-        {this.state.jiebaLoadingState ? (
-          <div>
+        <div className="TableComponent">
+          {this.state.KwTotalLoadingState ? (
             <ReactTable
-              data={this.state.jiebaList}
+              data={this.state.KwTotal}
               showPagination={false}
+              // defaultPageSize={1}
               columns={[
                 {
-                  Header: "pKw",
+                  Header: "Kw",
                   columns: [
                     {
                       Header: "關鍵字",
-                      accessor: "word"
+                      accessor: "Kw"
                     },
                     {
-                      Header: "權重值",
-                      accessor: "weight"
+                      Header: "出現頻率",
+                      accessor: "frequency"
+                    },
+                    {
+                      Header: "初始位置",
+                      accessor: "Localtag"
                     }
                   ]
                 }
               ]}
-              className="-striped -highlight"
+              className="kwTable"
             />
-          </div>
-        ) : null}
+          ) : null}
+
+          {this.state.jiebaLoadingState ? (
+            <div>
+              <ReactTable
+                data={this.state.jiebaList}
+                showPagination={false}
+                style={{ width: 300 }}
+                columns={[
+                  {
+                    Header: "pKw to jieba",
+                    columns: [
+                      {
+                        Header: "關鍵字",
+                        accessor: "word"
+                      },
+                      {
+                        Header: "權重值",
+                        accessor: "weight"
+                      }
+                    ]
+                  }
+                ]}
+                className="pkwTable"
+              />
+            </div>
+          ) : null}
+        </div>
       </div>
     );
   }
