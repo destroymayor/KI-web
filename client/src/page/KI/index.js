@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import logo from "../logo.svg";
-import "./App.css";
+import logo from "./logo.svg";
+import "./index.css";
 
 import { Icon } from "antd";
 
@@ -8,13 +8,14 @@ import { Icon } from "antd";
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 
+//載入table組件庫
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-import FireBaseApp from "../db/firebaseAPI";
-import Buttons from "./components/Buttons";
+import FireBaseApp from "../../db/firebaseAPI";
+import Buttons from "../../utils/components/Buttons";
 
-class App extends Component {
+export default class KI extends Component {
   state = {
     //Loading State
     SourceTextLoadingState: false,
@@ -40,9 +41,7 @@ class App extends Component {
     KwTotal: [],
     KwTotalLoadingState: false,
     //讀取歷史kw庫按鈕狀態
-    FetchKeyWordHistoryDisabledState: true,
-    //kw計算頻率按鈕狀態
-    CalculateFrequencyDisabledState: true
+    FetchKeyWordHistoryDisabledState: true
   };
 
   componentDidMount() {
@@ -58,27 +57,7 @@ class App extends Component {
       this.ref.ref("SourceText/").off("value", this._FetchSourceText);
       this.ref.ref("/KeyWord").off("value", this._FetchKeyWordHistory);
     }
-  }
-
-  fetch_jieba() {
-    fetch("/jieba?page=" + this.state.SourceTextSelectedOption)
-      .then(res => res.json())
-      .then(result => {
-        result.map((value, index) => {
-          return this.setState({
-            SourceText: this.state.SourceText.replace(
-              new RegExp(value.word, "g"),
-              val => `<span style="color:#2897ff;">${val}</span>`
-            )
-          });
-        });
-
-        this.setState({
-          jiebaList: result,
-          jiebaLoadingState: true,
-          FetchjiebaListDisabledState: true
-        });
-      });
+    this.FetchKeyWordHistoryTimeout && clearTimeout(this.FetchKeyWordHistoryTimeout);
   }
 
   //讀取sourceText庫資料
@@ -106,13 +85,13 @@ class App extends Component {
   };
 
   //讀取歷史kw庫資料
-  _FetchKeyWordHistory = async snapshot => {
+  _FetchKeyWordHistory = snapshot => {
     const KwHistoryArray = [];
-    await snapshot.forEach(val => {
+    snapshot.forEach(val => {
       KwHistoryArray.push(val.val());
     });
 
-    await this.setState({
+    this.setState({
       //儲存kw歷史庫
       KwHistory: KwHistoryArray,
       //讀取歷史kw庫並標出顏色(綠色)
@@ -125,47 +104,72 @@ class App extends Component {
     });
   };
 
+  //計算文章出現kw頻率
+  CalculateFrequency() {
+    this.FetchKeyWordHistoryTimeout = setTimeout(() => {
+      this.state.KwHistory.forEach((value, index) => {
+        const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
+        this.state.KwTotal.push({
+          //kw
+          Kw: frequencyState ? null : value,
+          //出現頻率
+          frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
+          //出現位置字元
+          Localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+        });
+      });
+
+      //過濾null值
+      this.setState({
+        KwTotal: this.state.KwTotal.filter(value => {
+          return value.Kw !== null;
+        })
+      });
+    }, 200);
+
+    //close loading 按鈕
+    this.setState({ KwTotalLoadingState: true });
+  }
+
+  Fetch_JiebaList() {
+    fetch("/jieba?page=" + this.state.SourceTextSelectedOption)
+      .then(res => res.json())
+      .then(result => {
+        result.map((value, index) => {
+          return this.setState({
+            SourceText: this.state.SourceText.replace(
+              new RegExp(value.word, "g"),
+              val => `<span style="color:#2897ff;">${val}</span>`
+            )
+          });
+        });
+
+        this.setState({
+          jiebaList: result,
+          jiebaLoadingState: true,
+          FetchjiebaListDisabledState: true
+        });
+      });
+  }
+
   //handle 下拉組件
   HandleSelect = selectValue => {
     this.setState({
       SourceText: selectValue.value,
       SourceTextLocalTags: selectValue.value,
       SourceTextSelectedOption: selectValue.label,
+      //歷史kw庫
       KwTotal: [],
       KwTotalLoadingState: false,
+      //jieba庫
+      jiebaList: [],
+      jiebaLoadingState: false,
       //open 讀取kw按鈕狀態
       FetchKeyWordHistoryDisabledState: false,
       //open jieba 按鈕狀態
-      FetchjiebaListDisabledState: false,
-      jiebaList: [],
-      jiebaLoadingState: false
+      FetchjiebaListDisabledState: false
     });
   };
-
-  //計算文章出現kw頻率
-  CalculateFrequency() {
-    this.state.KwHistory.forEach((value, index) => {
-      const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
-      this.state.KwTotal.push({
-        //kw
-        Kw: frequencyState ? null : value,
-        //出現頻率
-        frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
-        //出現位置字元
-        Localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
-      });
-    });
-
-    //過濾null值
-    this.setState({
-      KwTotal: this.state.KwTotal.filter(value => {
-        return value.Kw !== null;
-      })
-    });
-    //close 計算頻率按鈕
-    this.setState({ CalculateFrequencyDisabledState: true, KwTotalLoadingState: true });
-    this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
-  }
 
   //Ur人工標色
   GetSelectedText() {
@@ -175,7 +179,6 @@ class App extends Component {
     SelectSpan.style.backgroundColor = "#EA0000";
     SelectSpan.appendChild(SelectedText);
     Selection.insertNode(SelectSpan);
-
     this.state.GetSelectedTextList.push(Selection.toString());
   }
 
@@ -201,13 +204,11 @@ class App extends Component {
           <img src={logo} className="Index-logo" alt="logo" />
           <h1 className="Index-title">KI for Web</h1>
         </header>
-        <h2>SourceText庫</h2>
-
+        <h3>SourceText庫</h3>
         <div className="SelectComponent">
           <Select
             className="ReactSelect"
             placeholder={this.state.SourceTextSelectedOption}
-            name="form-field-name"
             value={this.state.SourceTextSelectedOption}
             onChange={this.HandleSelect}
             options={this.state.SourceTextSelectItem}
@@ -218,24 +219,16 @@ class App extends Component {
           <Buttons
             disabled={this.state.FetchKeyWordHistoryDisabledState}
             Text={"讀取歷史Kw庫"}
-            onClick={() => {
-              this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
-              this.setState({ CalculateFrequencyDisabledState: false });
-            }}
-          />
-          <Buttons
-            disabled={this.state.CalculateFrequencyDisabledState}
-            Type={"Default"}
-            Text={"Kw重複頻率及位置"}
-            onClick={() => {
-              this.CalculateFrequency();
+            onClick={async () => {
+              await this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
+              await this.CalculateFrequency();
             }}
           />
           <Buttons
             disabled={this.state.FetchjiebaListDisabledState}
             Text={"讀取pkw庫"}
             onClick={() => {
-              this.fetch_jieba();
+              this.Fetch_JiebaList();
             }}
           />
           <Buttons
@@ -268,8 +261,8 @@ class App extends Component {
           {this.state.KwTotalLoadingState ? (
             <ReactTable
               data={this.state.KwTotal}
+              className="kwTable"
               showPagination={false}
-              // defaultPageSize={1}
               columns={[
                 {
                   Header: "Kw",
@@ -289,7 +282,6 @@ class App extends Component {
                   ]
                 }
               ]}
-              className="kwTable"
             />
           ) : null}
 
@@ -298,6 +290,7 @@ class App extends Component {
               <ReactTable
                 data={this.state.jiebaList}
                 showPagination={false}
+                className="pkwTable"
                 style={{ width: 300 }}
                 columns={[
                   {
@@ -314,7 +307,6 @@ class App extends Component {
                     ]
                   }
                 ]}
-                className="pkwTable"
               />
             </div>
           ) : null}
@@ -323,5 +315,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

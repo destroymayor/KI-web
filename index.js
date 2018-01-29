@@ -6,7 +6,7 @@ const compression = require("compression");
 const app = express();
 
 app.use(compression());
-app.disable("etag");
+//app.disable("etag");
 app.use(express.static(path.join(__dirname, "client/build")));
 
 routes(app);
