@@ -157,6 +157,11 @@ class App extends Component {
       });
     });
 
+    this.setState({
+      KwTotal: this.state.KwTotal.filter(value => {
+        return value.Kw !== null;
+      })
+    });
     //close 計算頻率按鈕
     this.setState({ CalculateFrequencyDisabledState: true, KwTotalLoadingState: true });
     this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
@@ -256,6 +261,8 @@ class App extends Component {
         {this.state.KwTotalLoadingState ? (
           <ReactTable
             data={this.state.KwTotal}
+            showPagination={false}
+            // defaultPageSize={1}
             columns={[
               {
                 Header: "Kw",
@@ -275,7 +282,6 @@ class App extends Component {
                 ]
               }
             ]}
-            defaultPageSize={20}
             className="-striped -highlight"
           />
         ) : null}
@@ -284,6 +290,7 @@ class App extends Component {
           <div>
             <ReactTable
               data={this.state.jiebaList}
+              showPagination={false}
               columns={[
                 {
                   Header: "pKw",
@@ -299,7 +306,6 @@ class App extends Component {
                   ]
                 }
               ]}
-              defaultPageSize={20}
               className="-striped -highlight"
             />
           </div>
@@ -310,34 +316,3 @@ class App extends Component {
 }
 
 export default App;
-
-// <div>
-//           <ul className="List_ul">
-//             {this.state.KwTotal.map((val, index) => (
-//               <li key={index}>
-//                 {val.frequency > 0 ? (
-//                   <span>
-//                     {val.Kw}
-//                     <span style={{ color: val.frequency > 0 ? "#00A600" : "#222222" }}>
-//                       {` >出現${val.frequency}次  ${
-//                         val.Localtag !== -1 ? `，初始位置在第${val.Localtag}字元` : ""
-//                       }`}
-//                     </span>
-//                   </span>
-//                 ) : null}
-//               </li>
-//             ))}
-//           </ul>
-//           {this.state.jiebaLoadingState ? (
-//             <ul className="List_ul">
-//               {this.state.jiebaList.map((value, index) => {
-//                 return (
-//                   <li key={index}>
-//                     pkw：{value.word}
-//                     {`  > 權重值：${value.weight}`}
-//                   </li>
-//                 );
-//               })}
-//             </ul>
-//           ) : null}
-//         </div>
