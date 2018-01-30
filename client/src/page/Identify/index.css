@@ -6,13 +6,29 @@
 }
 
 .KI_Item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 10px;
+}
+
+.KI_Add {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.KI_ItemTableComponent {
+  width: 70%;
+  align-self: center;
 }
 
 .KI_tableComponent {
 }
 
-.KI_ItemSelectComponent,
-.KI_ItemTableComponent {
+.KI_ItemSelectComponent {
+  width: 30%;
+  margin-top: 30px;
 }
 
 .KI_selectComponent {

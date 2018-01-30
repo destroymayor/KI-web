@@ -1,3 +1,6 @@
+/* 引入ant樣式組件 */
+@import "~antd/dist/antd.css";
+
 body {
   margin: 0;
   padding: 0;

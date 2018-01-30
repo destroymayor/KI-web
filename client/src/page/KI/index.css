@@ -1,6 +1,3 @@
-/* 引入ant樣式組件 */
-@import "~antd/dist/antd.css";
-
 .Index {
   display: flex;
   flex-direction: column;
