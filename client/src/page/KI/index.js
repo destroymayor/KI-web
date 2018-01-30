@@ -210,9 +210,6 @@ export default class KI extends Component {
           />
         </div>
         <div className="ButtonItem">
-          <Link to="/identify">
-            <Buttons Text={"identify"} />
-          </Link>
           <Buttons
             disabled={this.state.FetchKeyWordHistoryDisabledState}
             Text={"讀取歷史Kw庫"}
