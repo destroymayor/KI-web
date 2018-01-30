@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+import logo from "../../utils/logo.svg";
 import "./index.css";
 
 import { Icon } from "antd";
+import { Link } from "react-router-dom";
 
 //載入下拉組件庫
 import Select from "react-select";
@@ -57,7 +58,6 @@ export default class KI extends Component {
       this.ref.ref("SourceText/").off("value", this._FetchSourceText);
       this.ref.ref("/KeyWord").off("value", this._FetchKeyWordHistory);
     }
-    this.FetchKeyWordHistoryTimeout && clearTimeout(this.FetchKeyWordHistoryTimeout);
   }
 
   //讀取sourceText庫資料
@@ -85,13 +85,13 @@ export default class KI extends Component {
   };
 
   //讀取歷史kw庫資料
-  _FetchKeyWordHistory = snapshot => {
+  _FetchKeyWordHistory = async snapshot => {
     const KwHistoryArray = [];
-    snapshot.forEach(val => {
+    await snapshot.forEach(val => {
       KwHistoryArray.push(val.val());
     });
 
-    this.setState({
+    await this.setState({
       //儲存kw歷史庫
       KwHistory: KwHistoryArray,
       //讀取歷史kw庫並標出顏色(綠色)
@@ -100,56 +100,50 @@ export default class KI extends Component {
         val => `<span style="color:#00A600;">${val}</span>`
       ),
       //close 讀取歷史kw庫按鈕
-      FetchKeyWordHistoryDisabledState: true
+      FetchKeyWordHistoryDisabledState: true,
+      //close loading 按鈕
+      KwTotalLoadingState: true
+    });
+
+    //kw頻率及位置
+    await this.state.KwHistory.forEach((value, index) => {
+      const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
+      this.state.KwTotal.push({
+        //kw
+        Kw: frequencyState ? null : value,
+        //出現頻率
+        frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
+        //出現位置字元
+        Localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+      });
+    });
+
+    //過濾null值
+    await this.setState({
+      KwTotal: this.state.KwTotal.filter(value => {
+        return value.Kw !== null;
+      })
     });
   };
 
-  //計算文章出現kw頻率
-  CalculateFrequency() {
-    this.FetchKeyWordHistoryTimeout = setTimeout(() => {
-      this.state.KwHistory.forEach((value, index) => {
-        const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
-        this.state.KwTotal.push({
-          //kw
-          Kw: frequencyState ? null : value,
-          //出現頻率
-          frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
-          //出現位置字元
-          Localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+  async Fetch_JiebaList() {
+    try {
+      const fetchJiebaList = await fetch("/jieba?page=" + this.state.SourceTextSelectedOption);
+      const responseData = await fetchJiebaList.json();
+      responseData.map((value, index) => {
+        return this.setState({
+          SourceText: this.state.SourceText.replace(
+            new RegExp(value.word, "g"),
+            val => `<span style="color:#2897ff;">${val}</span>`
+          )
         });
       });
-
-      //過濾null值
       this.setState({
-        KwTotal: this.state.KwTotal.filter(value => {
-          return value.Kw !== null;
-        })
+        jiebaList: responseData,
+        jiebaLoadingState: true,
+        FetchjiebaListDisabledState: true
       });
-    }, 500);
-
-    //close loading 按鈕
-    this.setState({ KwTotalLoadingState: true });
-  }
-
-  Fetch_JiebaList() {
-    fetch("/jieba?page=" + this.state.SourceTextSelectedOption)
-      .then(res => res.json())
-      .then(result => {
-        result.map((value, index) => {
-          return this.setState({
-            SourceText: this.state.SourceText.replace(
-              new RegExp(value.word, "g"),
-              val => `<span style="color:#2897ff;">${val}</span>`
-            )
-          });
-        });
-
-        this.setState({
-          jiebaList: result,
-          jiebaLoadingState: true,
-          FetchjiebaListDisabledState: true
-        });
-      });
+    } catch (error) {}
   }
 
   //handle 下拉組件
@@ -202,7 +196,7 @@ export default class KI extends Component {
       <div className="Index">
         <header className="Index-header">
           <img src={logo} className="Index-logo" alt="logo" />
-          <h1 className="Index-title">KI for Web</h1>
+          <h1 className="Index-title">Kw Identify for Web</h1>
         </header>
         <h3>SourceText庫</h3>
         <div className="SelectComponent">
@@ -219,9 +213,8 @@ export default class KI extends Component {
           <Buttons
             disabled={this.state.FetchKeyWordHistoryDisabledState}
             Text={"讀取歷史Kw庫"}
-            onClick={async () => {
-              await this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
-              await this.CalculateFrequency();
+            onClick={() => {
+              this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
             }}
           />
           <Buttons
@@ -256,7 +249,6 @@ export default class KI extends Component {
             <Icon type="loading" style={{ fontSize: 24 }} spin />
           )}
         </div>
-
         <div className="TableComponent">
           {this.state.KwTotalLoadingState ? (
             <ReactTable
@@ -294,7 +286,7 @@ export default class KI extends Component {
                 style={{ width: 300 }}
                 columns={[
                   {
-                    Header: "pKw to jieba",
+                    Header: "pKw",
                     columns: [
                       {
                         Header: "關鍵字",

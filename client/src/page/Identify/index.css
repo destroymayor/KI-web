@@ -1,0 +1,19 @@
+.KI_index {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+.KI_Item {
+}
+
+.KI_tableComponent {
+}
+
+.KI_ItemSelectComponent,
+.KI_ItemTableComponent {
+}
+
+.KI_selectComponent {
+}
