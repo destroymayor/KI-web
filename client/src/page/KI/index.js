@@ -66,6 +66,7 @@ export default class KI extends Component {
       SourceTextArray.push(val.val());
     });
 
+    //select option
     SourceTextArray.forEach((value, index) => {
       this.state.SourceTextSelectItem.push(
         <Option key={index} value={value}>
@@ -214,9 +215,6 @@ export default class KI extends Component {
           </Select>
         </div>
         <div className="ButtonItem">
-          <Link to="/identify">
-            <Buttons Text={"identify"} />
-          </Link>
           <Buttons
             disabled={this.state.FetchKeyWordHistoryDisabledState}
             Text={"讀取歷史Kw庫"}
