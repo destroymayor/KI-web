@@ -10,20 +10,6 @@ const Option = Select.Option;
 
 export default class Identify extends Component {
   state = {
-    //Table config
-    colums: [
-      {
-        title: "Cs",
-        dataIndex: "Cs",
-        key: "Cs",
-        width: 100
-      },
-      {
-        title: "KwIdentify",
-        dataIndex: "KwIdentify",
-        key: "KwIdentify"
-      }
-    ],
     // Add Cs_Kw item
     Cs_InputText: null,
     CsAdd_SelectComponent: [],
@@ -125,7 +111,19 @@ export default class Identify extends Component {
               rowSelection={rowSelection}
               pagination={false}
               loading={this.state.TableLoadingState}
-              columns={this.state.colums}
+              columns={[
+                {
+                  title: "Cs",
+                  dataIndex: "Cs",
+                  key: "Cs",
+                  width: 100
+                },
+                {
+                  title: "KwIdentify",
+                  dataIndex: "KwIdentify",
+                  key: "KwIdentify"
+                }
+              ]}
               dataSource={this.state.TableItemSelect}
             />
           </div>

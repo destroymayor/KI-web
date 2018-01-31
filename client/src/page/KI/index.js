@@ -2,12 +2,8 @@ import React, { Component } from "react";
 import logo from "../../utils/logo.svg";
 import "./index.css";
 
-import { Icon, Select } from "antd";
+import { Icon, Select, Table } from "antd";
 import { Link } from "react-router-dom";
-
-//載入table組件庫
-import ReactTable from "react-table";
-import "react-table/react-table.css";
 
 import FireBaseApp from "../../db/firebaseAPI";
 import Buttons from "../../utils/components/Buttons";
@@ -113,19 +109,20 @@ export default class KI extends Component {
     await this.state.KwHistory.forEach((value, index) => {
       const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
       this.state.KwTotal.push({
+        index: index,
         //kw
-        Kw: frequencyState ? null : value,
+        keyword: frequencyState ? null : value,
         //出現頻率
         frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
         //出現位置字元
-        Localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+        localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
       });
     });
 
     //過濾null值
     await this.setState({
       KwTotal: this.state.KwTotal.filter(value => {
-        return value.Kw !== null;
+        return value.keyword !== null;
       })
     });
   };
@@ -215,6 +212,9 @@ export default class KI extends Component {
           </Select>
         </div>
         <div className="ButtonItem">
+          <Link to="/identify">
+            <Buttons Text={"identify"} />
+          </Link>
           <Buttons
             disabled={this.state.FetchKeyWordHistoryDisabledState}
             Text={"讀取歷史Kw庫"}
@@ -256,50 +256,58 @@ export default class KI extends Component {
         </div>
         <div className="TableComponent">
           {this.state.KwTotalLoadingState ? (
-            <ReactTable
-              data={this.state.KwTotal}
-              className="kwTable"
-              showPagination={false}
-              columns={[
-                {
-                  Header: "Kw",
-                  columns: [
-                    {
-                      Header: "關鍵字",
-                      accessor: "Kw"
-                    },
-                    {
-                      Header: "出現頻率",
-                      accessor: "frequency"
-                    },
-                    {
-                      Header: "初始位置",
-                      accessor: "Localtag"
-                    }
-                  ]
-                }
-              ]}
-            />
+            <div>
+              <Table
+                dataSource={this.state.KwTotal}
+                className="kwTable"
+                size="small"
+                rowKey={key => key.index}
+                columns={[
+                  {
+                    title: "Kw",
+                    children: [
+                      {
+                        title: "關鍵字",
+                        dataIndex: "keyword",
+                        key: "keyword"
+                      },
+                      {
+                        title: "出現頻率",
+                        dataIndex: "frequency",
+                        key: "frequency"
+                      },
+                      {
+                        title: "初始位置",
+                        dataIndex: "localtag",
+                        key: "localtag"
+                      }
+                    ]
+                  }
+                ]}
+              />
+            </div>
           ) : null}
 
           {this.state.jiebaLoadingState ? (
             <div>
-              <ReactTable
-                data={this.state.jiebaList}
-                showPagination={false}
+              <Table
+                dataSource={this.state.jiebaList}
                 className="pkwTable"
-                style={{ width: 300 }}
+                size="small"
+                rowKey={key => key.word}
                 columns={[
                   {
-                    Header: "pKw",
-                    columns: [
+                    title: "pKw",
+                    children: [
                       {
-                        Header: "關鍵字",
-                        accessor: "word"
+                        title: "關鍵字",
+                        dataIndex: "word",
+                        key: "word"
                       },
                       {
-                        Header: "權重值",
-                        accessor: "weight"
+                        title: "權重值",
+                        dataIndex: "weight",
+                        key: "weight"
                       }
                     ]
                   }
