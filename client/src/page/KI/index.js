@@ -2,12 +2,8 @@ import React, { Component } from "react";
 import logo from "../../utils/logo.svg";
 import "./index.css";
 
-import { Icon } from "antd";
+import { Icon, Select } from "antd";
 import { Link } from "react-router-dom";
-
-//載入下拉組件庫
-import Select from "react-select";
-import "react-select/dist/react-select.css";
 
 //載入table組件庫
 import ReactTable from "react-table";
@@ -15,6 +11,9 @@ import "react-table/react-table.css";
 
 import FireBaseApp from "../../db/firebaseAPI";
 import Buttons from "../../utils/components/Buttons";
+
+//Select component option
+const Option = Select.Option;
 
 export default class KI extends Component {
   state = {
@@ -68,7 +67,11 @@ export default class KI extends Component {
     });
 
     SourceTextArray.forEach((value, index) => {
-      this.state.SourceTextSelectItem.push({ value: value, label: index + 1 });
+      this.state.SourceTextSelectItem.push(
+        <Option key={index} value={value}>
+          {index + 1}
+        </Option>
+      );
     });
 
     this.setState({
@@ -149,8 +152,8 @@ export default class KI extends Component {
   //handle 下拉組件
   HandleSelect = selectValue => {
     this.setState({
-      SourceText: selectValue.value,
-      SourceTextLocalTags: selectValue.value,
+      SourceText: selectValue.key,
+      SourceTextLocalTags: selectValue.key,
       SourceTextSelectedOption: selectValue.label,
       //歷史kw庫
       KwTotal: [],
@@ -201,15 +204,19 @@ export default class KI extends Component {
         <h3>SourceText庫</h3>
         <div className="SelectComponent">
           <Select
-            className="ReactSelect"
+            className="KI_selectComponent"
+            style={{ width: "20%" }}
+            labelInValue
             placeholder={this.state.SourceTextSelectedOption}
-            value={this.state.SourceTextSelectedOption}
             onChange={this.HandleSelect}
-            options={this.state.SourceTextSelectItem}
-            autoFocus
-          />
+          >
+            {this.state.SourceTextSelectItem}
+          </Select>
         </div>
         <div className="ButtonItem">
+          <Link to="/identify">
+            <Buttons Text={"identify"} />
+          </Link>
           <Buttons
             disabled={this.state.FetchKeyWordHistoryDisabledState}
             Text={"讀取歷史Kw庫"}
