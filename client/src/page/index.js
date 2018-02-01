@@ -19,7 +19,7 @@ class Routers extends Component {
         <div className="Index">
           <header className="Index-header">
             <img src={logo} className="Index-logo" alt="logo" />
-            <h1 className="Index-title">Kw Identify for Web</h1>
+            <h1 className="Index-title">Keyword Identify For Web</h1>
           </header>
           <div className="Index-Content">
             <div className="Index-Content-Menu">

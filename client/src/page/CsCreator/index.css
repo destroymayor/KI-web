@@ -1,25 +1,36 @@
 .CsCreator-Index {
   display: flex;
-  flex-direction: column;
   text-align: center;
   justify-content: center;
 }
 
 .CsCreator-Item {
-  display: flex;
+  flex: 1;
   flex-direction: column;
   justify-content: center;
   margin: 10px;
 }
 
+.CsCreator-ArticlePreviewComponent {
+  flex: 1;
+}
+
 .CsCreator-Add {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 10px;
 }
 
+.CsCreator-InputItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .CsCreator-ItemTableComponent {
-  width: 70%;
   align-self: center;
 }
 
@@ -32,11 +43,6 @@
 }
 
 .CsCreator-TableComponent {
-}
-
-.KI_ItemSelectComponent {
-  width: 30%;
-  margin-top: 30px;
 }
 
 .CsCreator-AddBtn {
