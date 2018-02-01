@@ -2,13 +2,17 @@ import React, { Component } from "react";
 import "./index.css";
 import logo from "../utils/logo.svg";
 
+//載入 router library
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import Ki from "./KI/index";
-import CsCreator from "./CsCreator/index";
 
+//載入 Keyword Identify component
+import Ki from "./KI/index";
+//載入 CsCreator component
+import CsCreator from "./CsCreator/index";
+//載入 Menu component
 import Menu from "../utils/Menu/index";
 
-class App extends Component {
+class Routers extends Component {
   render() {
     return (
       <Router>
@@ -32,4 +36,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Routers;

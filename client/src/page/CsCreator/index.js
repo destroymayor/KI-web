@@ -7,15 +7,19 @@ import { Button, Input, Select, Table } from "antd";
 //Select component option
 const Option = Select.Option;
 
-export default class CsCreator extends Component {
+class CsCreator extends Component {
   state = {
     // Add Cs_Kw item
     Cs_InputText: null,
-    CsAdd_SelectComponent: [],
-    // select pkw
-    SelectpKwList: [],
-    //table select component
-    TableItemSelect: [],
+    CsAdd_CustomizeSelectComponent: [],
+    //Cs Select Component
+    CsAdd_SelectList: [],
+    // 選擇Cs後的 List
+    SelectCsList: [],
+    // 選擇pKw後的 List
+    SelectPkwList: [],
+    //cs kw total item
+    CsCreator_TotalItem: [],
     TableLoadingState: true
   };
 
@@ -32,54 +36,52 @@ export default class CsCreator extends Component {
       responseData.forEach((value, index) => {
         pKwSelectLists.push(<Option key={value.word}>{value.word}</Option>);
 
-        let CsNumber = parseInt(index + 1, 10);
-        this.state.TableItemSelect.push({
-          key: CsNumber,
-          Cs: "Cs" + CsNumber,
-          KwIdentify: (
-            <Select
-              className="KI_selectComponent"
-              allowClear={true}
-              mode="tags"
-              style={{ width: "100%" }}
-              placeholder="pKw"
-              onChange={this.HandleSelect}
-            >
-              {pKwSelectLists}
-            </Select>
-          )
-        });
+        this.state.CsAdd_SelectList.push(<Option key={parseInt(index + 1, 10)}>{`Cs${index + 1}`}</Option>);
 
-        this.setState({ TableLoadingState: false, CsAdd_SelectComponent: pKwSelectLists });
+        this.setState({
+          CsAdd_CustomizeSelectComponent: pKwSelectLists
+        });
       });
     } catch (error) {}
   }
 
-  HandleSelect = value => {
-    this.setState({ SelectpKwList: value });
-    console.log(value);
+  //Cs 選擇handle
+  handleCsSelect = value => {
+    this.setState({ SelectCsList: value.label });
   };
 
-  handleAddCs_Kw = () => {};
+  //pkw 選擇handle
+  handlePkwSelect = value => {
+    this.setState({ SelectPkwList: value });
+  };
+
+  //total 選擇handle
+  handleAddCs_Kw = () => {
+    this.state.CsCreator_TotalItem.push({ Cs: this.state.SelectCsList, Kw: this.state.SelectPkwList });
+    this.setState({ TableLoadingState: false });
+    console.log(this.state.SelectCsList, this.state.SelectPkwList, this.state.CsCreator_TotalItem);
+  };
 
   render() {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`);
-        this.setState({
-          KwSelectDisabled: false
-        });
-      },
-      type: "radio"
+      }
     };
 
     return (
-      <div className="KI_index">
-        <div className="KI_Item">
-          <div className="KI_Add">
-            <Button className="add-btn" onClick={this.handleAddCs_Kw}>
-              添加自訂義Cs_Kw
-            </Button>
+      <div className="CsCreator-Index">
+        <div className="CsCreator-Item">
+          <div className="CsCreator-Add">
+            <Select
+              style={{ width: "30%" }}
+              className="CsCreator-SelectComponent"
+              labelInValue
+              placeholder={"選擇Cs"}
+              onChange={this.handleCsSelect}
+            >
+              {this.state.CsAdd_SelectList}
+            </Select>
             <Input
               placeholder="Cs"
               style={{ width: 100, marginRight: 10, marginLeft: 10 }}
@@ -88,22 +90,25 @@ export default class CsCreator extends Component {
             />
             <Select
               style={{ width: "100%" }}
-              className="KI_selectComponent"
+              className="CsCreator-pKwSelectComponent"
               allowClear={true}
               mode="tags"
               placeholder="pKw"
-              onChange={value => {
-                console.log(value);
-              }}
+              onChange={this.handlePkwSelect}
             >
-              {this.state.CsAdd_SelectComponent}
+              {this.state.CsAdd_CustomizeSelectComponent}
             </Select>
+            <Button className="CsCreator-AddBtn" onClick={this.handleAddCs_Kw}>
+              添加Cs_Kw
+            </Button>
           </div>
-          <div className="KI_ItemTableComponent">
+          <div className="CsCreator-ItemTableComponent">
             <Table
-              className="KI_tableComponent"
+              className="CsCreator-TableComponent"
+              size={"small"}
               rowSelection={rowSelection}
               pagination={false}
+              rowKey={key => key.Cs}
               loading={this.state.TableLoadingState}
               columns={[
                 {
@@ -113,12 +118,14 @@ export default class CsCreator extends Component {
                   width: 100
                 },
                 {
-                  title: "KwIdentify",
-                  dataIndex: "KwIdentify",
-                  key: "KwIdentify"
+                  title: "Kw",
+                  dataIndex: "Kw",
+                  key: "Kw",
+                  render: Kw => <span>{`${Kw}`}</span>
                 }
               ]}
-              dataSource={this.state.TableItemSelect}
+              dataSource={this.state.CsCreator_TotalItem}
+              footer={() => <Button>全部添加至DB</Button>}
             />
           </div>
         </div>
@@ -126,3 +133,5 @@ export default class CsCreator extends Component {
     );
   }
 }
+
+export default CsCreator;

@@ -12,7 +12,7 @@ import Buttons from "../../utils/components/Buttons";
 //Select component option
 const Option = Select.Option;
 
-export default class KI extends Component {
+class KI extends Component {
   state = {
     //Loading State
     SourceTextLoadingState: false,
@@ -311,3 +311,5 @@ export default class KI extends Component {
     );
   }
 }
+
+export default KI;
