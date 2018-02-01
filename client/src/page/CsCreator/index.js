@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from "../../utils/logo.svg";
 import "./index.css";
 
 //import FireBaseApp from "../../db/firebaseAPI";
@@ -8,7 +7,7 @@ import { Button, Input, Select, Table } from "antd";
 //Select component option
 const Option = Select.Option;
 
-export default class Identify extends Component {
+export default class CsCreator extends Component {
   state = {
     // Add Cs_Kw item
     Cs_InputText: null,
@@ -76,11 +75,6 @@ export default class Identify extends Component {
 
     return (
       <div className="KI_index">
-        <header className="Index-header">
-          <img src={logo} className="Index-logo" alt="logo" />
-          <h1 className="Index-title">Kw Identify for Web</h1>
-        </header>
-
         <div className="KI_Item">
           <div className="KI_Add">
             <Button className="add-btn" onClick={this.handleAddCs_Kw}>

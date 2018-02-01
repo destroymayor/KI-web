@@ -1,0 +1,49 @@
+.Index {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+.Index-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.Index-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.Index-title {
+  font-size: 1.5em;
+  color: #ffffff;
+}
+
+.Index-intro {
+  font-size: large;
+}
+
+.Index-Content {
+  display: flex;
+  justify-content: center;
+}
+
+.Index-Content-Menu {
+  flex: 0.5;
+}
+
+.Index-Content-Page {
+  flex: 3;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

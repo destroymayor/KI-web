@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import logo from "../../utils/logo.svg";
 import "./index.css";
 
+//載入ant design 組件庫
 import { Icon, Select, Table } from "antd";
-import { Link } from "react-router-dom";
 
+//載入firebase api
 import FireBaseApp from "../../db/firebaseAPI";
+
 import Buttons from "../../utils/components/Buttons";
 
 //Select component option
@@ -131,16 +132,17 @@ export default class KI extends Component {
     try {
       const fetchJiebaList = await fetch("/jieba?page=" + this.state.SourceTextSelectedOption);
       const responseData = await fetchJiebaList.json();
-      responseData.map((value, index) => {
-        return this.setState({
+      responseData.forEach((value, index) => {
+        this.setState({
           SourceText: this.state.SourceText.replace(
             new RegExp(value.word, "g"),
             val => `<span style="color:#2897ff;">${val}</span>`
           )
         });
+        this.state.jiebaList.push({ word: value.word, weight: value.weight.toFixed(2) });
       });
+
       this.setState({
-        jiebaList: responseData,
         jiebaLoadingState: true,
         FetchjiebaListDisabledState: true
       });
@@ -194,11 +196,7 @@ export default class KI extends Component {
 
   render() {
     return (
-      <div className="Index">
-        <header className="Index-header">
-          <img src={logo} className="Index-logo" alt="logo" />
-          <h1 className="Index-title">Kw Identify for Web</h1>
-        </header>
+      <div className="Ki">
         <h3>SourceText庫</h3>
         <div className="SelectComponent">
           <Select
@@ -221,19 +219,19 @@ export default class KI extends Component {
           />
           <Buttons
             disabled={this.state.FetchjiebaListDisabledState}
-            Text={"讀取Source Tx庫"}
+            Text={"透過TextRank算出pKw"}
             onClick={() => {
               this.Fetch_JiebaList();
             }}
           />
           <Buttons
-            Text={"新增標記"}
+            Text={"新增標記至資料庫"}
             onClick={() => {
               this.InsertTextTag();
             }}
           />
           <Buttons
-            Text={"復原標記"}
+            Text={"取消標記"}
             onClick={() => {
               this.RemoveTextTagRange();
             }}
