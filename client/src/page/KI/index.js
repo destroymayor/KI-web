@@ -221,7 +221,7 @@ export default class KI extends Component {
           />
           <Buttons
             disabled={this.state.FetchjiebaListDisabledState}
-            Text={"讀取pkw庫"}
+            Text={"讀取Source Tx庫"}
             onClick={() => {
               this.Fetch_JiebaList();
             }}
