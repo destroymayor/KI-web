@@ -37,6 +37,8 @@
 
 .Index-Content-Page {
   flex: 3;
+  display: flex;
+  justify-content: center;
 }
 
 @keyframes App-logo-spin {

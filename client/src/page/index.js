@@ -4,6 +4,9 @@ import logo from "../utils/logo.svg";
 
 //載入 router library
 import { BrowserRouter as Router, Route } from "react-router-dom";
+
+//載入 ChatRoom
+import ChatRoom from "./Chat/index";
 //載入 Keyword Identify page
 import Ki from "./KI/index";
 //載入CsCreator page
@@ -25,7 +28,8 @@ class Routers extends Component {
               <Menu />
             </div>
             <div className="Index-Content-Page">
-              <Route exact path="/Ki" component={Ki} />
+              <Route exact path="/" component={ChatRoom} />
+              <Route path="/Ki" component={Ki} />
               <Route path="/CsCreator" component={CsCreator} />
             </div>
           </div>

@@ -1,5 +1,6 @@
 .CsCreator-Index {
   display: flex;
+  flex: 1;
   text-align: center;
   justify-content: center;
 }
@@ -22,7 +23,7 @@
   margin-bottom: 10px;
   border-radius: 10px;
   padding: 0 0 10px 10px;
-  background: #f3f3f3
+  background: #f3f3f3;
 }
 
 .CsCreator-AddItem {
@@ -43,6 +44,8 @@
   margin-left: 10px;
 }
 
-.CsCreator-pKwSelectComponent {}
+.CsCreator-pKwSelectComponent {
+}
 
-.CsCreator-TableComponent {}
+.CsCreator-TableComponent {
+}

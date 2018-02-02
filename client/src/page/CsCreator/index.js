@@ -56,7 +56,7 @@ class CsCreator extends Component {
 
   //Cs 選擇handle
   handleCsSelect = value => {
-    this.setState({ SelectCsList: value.label, ArticlePreviewLoadingState: false, AddCs_KwState: false });
+    this.setState({ SelectCsList: value.label, ArticlePreviewLoadingState: false });
   };
 
   // handle參看原文章
@@ -112,7 +112,6 @@ class CsCreator extends Component {
                   style={{ width: 150 }}
                   className="CsCreator-SelectComponent"
                   labelInValue
-                  placeholder={"選擇Cs"}
                   onChange={this.handleCsSelect}
                 >
                   {this.state.CsAdd_SelectList}
@@ -139,7 +138,7 @@ class CsCreator extends Component {
                 placeholder="pKw"
                 onChange={value => {
                   // pkw select list
-                  this.setState({ SelectPkwList: value });
+                  this.setState({ SelectPkwList: value, AddCs_KwState: false });
                 }}
                 onDeselect={value => {
                   //標記顏色復原
