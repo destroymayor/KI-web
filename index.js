@@ -1,12 +1,13 @@
 const express = require("express");
 const path = require("path");
-const routes = require("./server/route");
 const compression = require("compression");
+
+//載入路由配置
+const routes = require("./server/route");
 
 const app = express();
 
 app.use(compression());
-//app.disable("etag");
 app.use(express.static(path.join(__dirname, "client/build")));
 
 routes(app);

@@ -4,12 +4,11 @@ import logo from "../utils/logo.svg";
 
 //載入 router library
 import { BrowserRouter as Router, Route } from "react-router-dom";
-
-//載入 Keyword Identify component
+//載入 Keyword Identify page
 import Ki from "./KI/index";
-//載入 CsCreator component
+//載入CsCreator page
 import CsCreator from "./CsCreator/index";
-//載入 Menu component
+//載入選單組件
 import Menu from "../utils/Menu/index";
 
 class Routers extends Component {

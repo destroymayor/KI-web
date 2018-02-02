@@ -3,15 +3,16 @@ import "./index.css";
 
 //import FireBaseApp from "../../db/firebaseAPI";
 import { Button, Collapse, Input, Select, Table } from "antd";
-//Select component option
+// Select component option
 const Option = Select.Option;
 // Panel component option
 const Panel = Collapse.Panel;
 
 class CsCreator extends Component {
   state = {
-    // Add Cs_Kw item
-    Cs_InputText: null,
+    //切換Cs選擇模式
+    CsSwitchMode: true,
+    //Css select多選
     CsAdd_CustomizeSelectComponent: [],
     //添加Cs-Kw按鈕狀態
     AddCs_KwState: true,
@@ -23,9 +24,7 @@ class CsCreator extends Component {
     SelectPkwList: [],
     //cs kw total item
     CsCreator_TotalItem: [],
-    //table loading state
-    TableLoadingState: true,
-    //
+    //table添加至db的button state
     Cs_KwListToDataBaseBtnState: true,
     // 選擇pkw時參看原文章
     ArticlePreview:
@@ -60,35 +59,27 @@ class CsCreator extends Component {
     this.setState({ SelectCsList: value.label, ArticlePreviewLoadingState: false, AddCs_KwState: false });
   };
 
-  //pkw 選擇handle
+  // handle參看原文章
   handlePkwSelect = value => {
-    // pkw select list
-    this.setState({ SelectPkwList: value });
-
     //參看原文章
-    if (value.length > 0) {
-      value.forEach(result => {
-        this.setState({
-          ArticlePreview: this.state.ArticlePreview.replace(
-            new RegExp(result, "g"),
-            val => `<span style="background:#2897ff;">${val}</span>`
-          ),
-          ArticlePreviewLoadingState: true
-        });
-      });
-    }
+    this.setState({
+      ArticlePreview: this.state.ArticlePreview.replace(
+        new RegExp(value, "g"),
+        val => `<span style="background:#2897ff;">${val}</span>`
+      ),
+      ArticlePreviewLoadingState: true
+    });
   };
 
   //total 選擇handle
   handleAddCs_Kw = () => {
     this.state.CsCreator_TotalItem.push({ Cs: this.state.SelectCsList, Kw: this.state.SelectPkwList });
     this.setState({
-      TableLoadingState: false,
+      ArticlePreview: this.state.ArticlePreview.replace(/<[^>]*>/g, ""),
       ArticlePreviewLoadingState: false,
       AddCs_KwState: true,
       Cs_KwListToDataBaseBtnState: false
     });
-    console.log(this.state.SelectCsList, this.state.SelectPkwList, this.state.CsCreator_TotalItem);
   };
 
   render() {
@@ -102,52 +93,85 @@ class CsCreator extends Component {
       <div className="CsCreator-Index">
         <div className="CsCreator-Item">
           <div className="CsCreator-Add">
-            <div className="CsCreator-InputItem">
-              <Select
-                style={{ width: 150, marginBottom: 10 }}
-                className="CsCreator-SelectComponent"
-                labelInValue
-                placeholder={"選擇Cs"}
-                onChange={this.handleCsSelect}
+            <div className="CsCreator-AddItem">
+              <Button
+                type="primary"
+                icon={this.state.CsSwitchMode ? "profile" : "edit"}
+                onClick={() => {
+                  this.setState({
+                    CsSwitchMode: !this.state.CsSwitchMode,
+                    AddCs_KwState: true,
+                    SelectCsList: ""
+                  });
+                }}
               >
-                {this.state.CsAdd_SelectList}
-              </Select>
-              <Input
-                placeholder="Cs"
-                value={this.state.Cs_InputText}
-                onChange={value => this.setState({ Cs_InputText: value.target.value })}
-              />
+                {this.state.CsSwitchMode ? "選擇Cs" : "自定義Cs"}
+              </Button>
+              {this.state.CsSwitchMode ? (
+                <Select
+                  style={{ width: 150 }}
+                  className="CsCreator-SelectComponent"
+                  labelInValue
+                  placeholder={"選擇Cs"}
+                  onChange={this.handleCsSelect}
+                >
+                  {this.state.CsAdd_SelectList}
+                </Select>
+              ) : (
+                <Input
+                  style={{ width: 150, marginLeft: 10 }}
+                  placeholder="Cs"
+                  value={this.state.SelectCsList}
+                  onChange={value =>
+                    this.setState({
+                      SelectCsList: value.target.value
+                    })
+                  }
+                />
+              )}
             </div>
-
-            <Select
-              style={{ width: "50%" }}
-              className="CsCreator-pKwSelectComponent"
-              allowClear={true}
-              mode="tags"
-              placeholder="pKw"
-              onChange={this.handlePkwSelect}
-              onPopupScroll={() => {
-                console.log("onPopupScroll");
-              }}
-            >
-              {this.state.CsAdd_CustomizeSelectComponent}
-            </Select>
-            <Button
-              disabled={this.state.AddCs_KwState}
-              className="CsCreator-AddBtn"
-              onClick={this.handleAddCs_Kw}
-            >
-              添加Cs_Kw
-            </Button>
+            <div className="CsCreator-AddItem">
+              <Select
+                style={{ width: "50%" }}
+                className="CsCreator-pKwSelectComponent"
+                allowClear={true}
+                mode="tags"
+                placeholder="pKw"
+                onChange={value => {
+                  // pkw select list
+                  this.setState({ SelectPkwList: value });
+                }}
+                onDeselect={value => {
+                  //標記顏色復原
+                  this.setState({
+                    ArticlePreview: this.state.ArticlePreview.replace(
+                      new RegExp(`<span[^>]*>[${value}]+</span>`, "g"),
+                      value
+                    )
+                  });
+                }}
+                onSelect={this.handlePkwSelect}
+              >
+                {this.state.CsAdd_CustomizeSelectComponent}
+              </Select>
+              <Button
+                disabled={this.state.AddCs_KwState}
+                className="CsCreator-AddBtn"
+                onClick={this.handleAddCs_Kw}
+              >
+                添加Cs_Kw
+              </Button>
+            </div>
           </div>
           <div className="CsCreator-ItemTableComponent">
             <Table
               className="CsCreator-TableComponent"
+              dataSource={this.state.CsCreator_TotalItem}
               size={"small"}
               rowSelection={rowSelection}
               pagination={false}
               rowKey={key => key.Cs}
-              loading={this.state.TableLoadingState}
+              footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>全部添加至DB</Button>}
               columns={[
                 {
                   title: "Cs",
@@ -162,8 +186,6 @@ class CsCreator extends Component {
                   render: Kw => <span>{`${Kw}`}</span>
                 }
               ]}
-              dataSource={this.state.CsCreator_TotalItem}
-              footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>全部添加至DB</Button>}
             />
           </div>
         </div>

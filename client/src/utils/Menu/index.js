@@ -11,32 +11,49 @@ const MenuItemGroup = Menu.ItemGroup;
 class Menus extends Component {
   render() {
     return (
-      <Menu mode="vertical">
-        <SubMenu
-          key="MenuRouter"
-          title={
-            <span>
-              <Icon type="bars" />
-              功能選單
-            </span>
-          }
-        >
-          <Menu.Item key="1">
-            <Link to="/">
-              <Icon type="home" />
-              首頁
-            </Link>
-          </Menu.Item>
-          <MenuItemGroup key="group1" title="主要">
-            <Menu.Item key="2">
-              <Link to="/Ki">Keyword Identify</Link>
+      <div>
+        <Menu mode="inline" defaultSelectedKeys={["User"]} defaultOpenKeys={["RoleSwitch"]}>
+          <SubMenu
+            key="RoleSwitch"
+            title={
+              <span>
+                <Icon type="user" />
+                角色切換
+              </span>
+            }
+          >
+            <Menu.Item key="User">User</Menu.Item>
+            <Menu.Item key="Trainer">Trainer</Menu.Item>
+            <Menu.Item key="Expert">Expert</Menu.Item>
+          </SubMenu>
+        </Menu>
+        <Menu mode="vertical">
+          <SubMenu
+            key="MenuRouter"
+            title={
+              <span>
+                <Icon type="bars" />
+                功能選單
+              </span>
+            }
+          >
+            <Menu.Item key="home">
+              <Link to="/">
+                <Icon type="home" />
+                首頁
+              </Link>
             </Menu.Item>
-            <Menu.Item key="3">
-              <Link to="/CsCreator">CsCreator</Link>
-            </Menu.Item>
-          </MenuItemGroup>
-        </SubMenu>
-      </Menu>
+            <MenuItemGroup key="group1" title="主要功能">
+              <Menu.Item key="Ki">
+                <Link to="/Ki">Keyword Identify</Link>
+              </Menu.Item>
+              <Menu.Item key="CsCreator">
+                <Link to="/CsCreator">CsCreator</Link>
+              </Menu.Item>
+            </MenuItemGroup>
+          </SubMenu>
+        </Menu>
+      </div>
     );
   }
 }
