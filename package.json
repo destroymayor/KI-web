@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node index.js",
     "client": "cd client && yarn start",
-    "build":"cd client && yarn build",
+    "build": "cd client && yarn build",
     "heroku-postbuild": "cd client && yarn --production=false && yarn build",
     "deploy": "git add . && git ci -m 'ci' && git push heroku master",
     "push": "git add . && git ci -m 'ci' && git push -u origin master"
@@ -22,6 +22,7 @@
     "body-parser": "^1.18.2",
     "compression": "^1.7.1",
     "express": "^4.16.2",
-    "nodejieba": "^2.2.5"
+    "nodejieba": "^2.2.5",
+    "socket.io": "^2.0.4"
   }
 }

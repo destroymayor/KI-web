@@ -4,6 +4,9 @@ import "./index.css";
 
 import HandleMessage from "./handleMessage";
 
+import io from "socket.io-client";
+const socket = io().connect("http://localhost:3000/");
+
 class ChatRoom extends Component {
   state = {
     chats: [
@@ -20,6 +23,10 @@ class ChatRoom extends Component {
 
   componentDidMount() {
     this.scrollToBot();
+    socket.on("ChatMessage", data => {
+      console.log("client message", data);
+      socket.emit("my client", { client: "client msg to server" });
+    });
   }
 
   componentDidUpdate() {
