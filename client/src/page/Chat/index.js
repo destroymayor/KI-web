@@ -6,7 +6,7 @@ import HandleMessage from "./handleMessage";
 
 //載入socket.io client庫
 import io from "socket.io-client";
-const socket = io.connect("http://localhost:5000/");
+const socket = io.connect("https://kiweb.herokuapp.com/");
 
 class ChatRoom extends Component {
   state = {
