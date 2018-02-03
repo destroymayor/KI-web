@@ -4,28 +4,34 @@ import "./index.css";
 
 import HandleMessage from "./handleMessage";
 
+//載入socket.io client庫
 import io from "socket.io-client";
-const socket = io().connect("http://localhost:3000/");
+const socket = io.connect("http://localhost:3000/");
 
 class ChatRoom extends Component {
   state = {
     chats: [
       {
-        username: "user",
-        content: "hello"
-      },
-      {
         username: "ChatBot",
-        content: "hey!"
+        content: "嗨"
       }
     ]
   };
 
   componentDidMount() {
     this.scrollToBot();
-    socket.on("ChatMessage", data => {
-      console.log("client message", data);
-      socket.emit("my client", { client: "client msg to server" });
+
+    //接收server回傳的訊息
+    socket.on("SendMessage", data => {
+      this.setState({
+        chats: this.state.chats.concat([
+          {
+            username: "ChatBot",
+            content: data.content
+          }
+        ])
+      });
+      console.log("client NewMessage", data);
     });
   }
 
@@ -39,12 +45,18 @@ class ChatRoom extends Component {
 
   submitMessage(e) {
     e.preventDefault();
+
+    if (ReactDOM.findDOMNode(this.refs.message).value === "") return null;
+
+    //傳送訊息
+    socket.emit("SendMessage", { username: "User", content: ReactDOM.findDOMNode(this.refs.message).value });
+
     this.setState(
       {
         chats: this.state.chats.concat([
           {
             username: "user",
-            content: <p>{ReactDOM.findDOMNode(this.refs.message).value}</p>
+            content: ReactDOM.findDOMNode(this.refs.message).value
           }
         ])
       },
