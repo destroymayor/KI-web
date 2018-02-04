@@ -3,8 +3,8 @@ module.exports = io => {
   io.sockets.on("connection", socket => {
     //接收client訊息並回傳
     socket.on("SendMessage", data => {
-      console.log("server接收訊息", "使用者:", data.username, "內容:", data.content);
-      socket.emit("SendMessage", { username: "ChatBot", content: "server回傳訊息" });
+      console.log("server msg", "使用者:", data.username, "內容:", data.content);
+      socket.emit("ReceiveMessage", { username: "ChatBot", content: "server回傳訊息" });
     });
 
     //離線

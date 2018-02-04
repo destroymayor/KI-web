@@ -1,30 +1,51 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import "./index.css";
 
 import HandleMessage from "./handleMessage";
 
 //載入socket.io client庫
-import io from "socket.io-client";
-const URL_Config =
-  process.env.NODE_ENV === "production" ? "https://kiweb.herokuapp.com/" : "http://localhost:3000/";
-const socket = io.connect(URL_Config);
+import SocketIOClient from "socket.io-client";
 
 class ChatRoom extends Component {
-  state = {
-    chats: [
-      {
-        username: "ChatBot",
-        content: "嗨"
-      }
-    ]
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      chats: [
+        {
+          username: "ChatBot",
+          content: "嗨"
+        }
+      ]
+    };
+
+    // socketIO config
+    this.socket = SocketIOClient(
+      process.env.NODE_ENV === "production" ? "https://kiweb.herokuapp.com/" : "http://localhost:3000/"
+    );
+  }
 
   componentDidMount() {
     this.scrollToBot();
+    this.ReceiveMessage();
+  }
 
-    //接收server回傳的訊息
-    socket.on("SendMessage", data => {
+  componentDidUpdate() {
+    this.scrollToBot();
+  }
+
+  componentWillUnmount() {
+    this.socket.close();
+  }
+
+  // scroll控制
+  scrollToBot() {
+    this.refs.chats.scrollTop = this.refs.chats.scrollHeight;
+  }
+
+  //接收訊息
+  ReceiveMessage() {
+    this.socket.connect();
+    this.socket.on("ReceiveMessage", data => {
       this.setState({
         chats: this.state.chats.concat([
           {
@@ -37,26 +58,14 @@ class ChatRoom extends Component {
     });
   }
 
-  componentDidUpdate() {
-    this.scrollToBot();
-  }
-
-  scrollToBot() {
-    // scroll控制
-    ReactDOM.findDOMNode(this.refs.chats).scrollTop = ReactDOM.findDOMNode(this.refs.chats).scrollHeight;
-  }
-
   //送出訊息
   submitMessage(e) {
     e.preventDefault();
 
-    if (ReactDOM.findDOMNode(this.refs.message).value === "") return null;
+    if (this.refs.message.value === "") return null;
 
     //socket.io傳送訊息
-    socket.emit("SendMessage", { username: "User", content: ReactDOM.findDOMNode(this.refs.message).value });
-    socket.on("disconnect", () => {
-      console.log("client 連線已斷開");
-    });
+    this.socket.emit("SendMessage", { username: "User", content: this.refs.message.value });
 
     //將訊息合併至list
     this.setState(
@@ -64,12 +73,12 @@ class ChatRoom extends Component {
         chats: this.state.chats.concat([
           {
             username: "user",
-            content: ReactDOM.findDOMNode(this.refs.message).value
+            content: this.refs.message.value
           }
         ])
       },
       () => {
-        ReactDOM.findDOMNode(this.refs.message).value = "";
+        this.refs.message.value = "";
       }
     );
   }

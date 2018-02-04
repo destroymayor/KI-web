@@ -19,7 +19,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.2",
     "compression": "^1.7.1",
     "express": "^4.16.2",
     "nodejieba": "^2.2.5",
