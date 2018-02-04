@@ -23,10 +23,6 @@ class ChatRoom extends Component {
   componentDidMount() {
     this.scrollToBot();
 
-    socket.on("connect", data => {
-      console.log("client 與 server 已連線");
-    });
-
     //接收server回傳的訊息
     socket.on("SendMessage", data => {
       this.setState({
@@ -45,25 +41,24 @@ class ChatRoom extends Component {
     this.scrollToBot();
   }
 
-  componentWillUnmount() {
-    //斷開socket連線
-  }
-
   scrollToBot() {
     // scroll控制
     ReactDOM.findDOMNode(this.refs.chats).scrollTop = ReactDOM.findDOMNode(this.refs.chats).scrollHeight;
   }
 
+  //送出訊息
   submitMessage(e) {
     e.preventDefault();
 
     if (ReactDOM.findDOMNode(this.refs.message).value === "") return null;
 
-    //傳送訊息
+    //socket.io傳送訊息
     socket.emit("SendMessage", { username: "User", content: ReactDOM.findDOMNode(this.refs.message).value });
     socket.on("disconnect", () => {
       console.log("client 連線已斷開");
     });
+
+    //將訊息合併至list
     this.setState(
       {
         chats: this.state.chats.concat([

@@ -18,7 +18,7 @@ app.get("*", (req, res) => {
 
 //socket.io config
 const server = require("http").Server(app);
-const io = require("socket.io").listen(server);
-require("./server/socketIO/chat")(io);
+const SocketIO = require("socket.io").listen(server);
+require("./server/socketIO/chat")(SocketIO);
 
 server.listen(process.env.PORT || 5000);

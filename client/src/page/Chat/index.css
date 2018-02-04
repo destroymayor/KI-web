@@ -81,6 +81,7 @@
 }
 
 .ChatRoom .input input[type="submit"] {
+  outline: 0;
   background: transparent;
   border: 1px solid #dddddd;
   height: 30px;
@@ -94,5 +95,6 @@
 
 .ChatRoom .input input[type="submit"]:hover {
   background: #2897ff;
+  border: 1px solid #2897ff;
   color: #fff;
 }

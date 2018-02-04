@@ -3,7 +3,8 @@ import "./index.css";
 import logo from "../utils/logo.svg";
 
 //載入 router library
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Router, Route } from "react-router-dom";
+import history from "./RouterHistory";
 
 //載入 ChatRoom
 import ChatRoom from "./Chat/index";
@@ -17,7 +18,7 @@ import Menu from "../utils/Menu/index";
 class Routers extends Component {
   render() {
     return (
-      <Router>
+      <Router history={history}>
         <div className="Index">
           <header className="Index-header">
             <img src={logo} className="Index-logo" alt="logo" />

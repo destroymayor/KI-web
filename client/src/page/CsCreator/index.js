@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./index.css";
 
 //import FireBaseApp from "../../db/firebaseAPI";
-import { Button, Collapse, Input, Select, Table } from "antd";
+import { Button, Collapse, Icon, Input, Select, Popover, Table } from "antd";
 // Select component option
 const Option = Select.Option;
 // Panel component option
@@ -12,16 +12,18 @@ class CsCreator extends Component {
   state = {
     //切換Cs選擇模式
     CsSwitchMode: true,
-    //Css select多選
+    //Cs select多選 list
     CsAdd_CustomizeSelectComponent: [],
     //添加Cs-Kw按鈕狀態
     AddCs_KwState: true,
-    //Cs Select Component
+    //Cs Select Component option
     CsAdd_SelectList: [],
     // 選擇Cs後的 List
-    SelectCsList: [],
+    SelectCsList: "",
     // 選擇pKw後的 List
     SelectPkwList: [],
+    // 選擇Cs-Lv
+    SelectCsLv: "",
     //cs kw total item
     CsCreator_TotalItem: [],
     //table添加至db的button state
@@ -54,11 +56,6 @@ class CsCreator extends Component {
     } catch (error) {}
   }
 
-  //Cs 選擇handle
-  handleCsSelect = value => {
-    this.setState({ SelectCsList: value.label, ArticlePreviewLoadingState: false });
-  };
-
   // handle參看原文章
   handlePkwSelect = value => {
     //參看原文章
@@ -73,7 +70,11 @@ class CsCreator extends Component {
 
   //total 選擇handle
   handleAddCs_Kw = () => {
-    this.state.CsCreator_TotalItem.push({ Cs: this.state.SelectCsList, Kw: this.state.SelectPkwList });
+    this.state.CsCreator_TotalItem.push({
+      Cs: this.state.SelectCsList,
+      Kw: this.state.SelectPkwList,
+      Lv: this.state.SelectCsLv
+    });
     this.setState({
       ArticlePreview: this.state.ArticlePreview.replace(/<[^>]*>/g, ""),
       ArticlePreviewLoadingState: false,
@@ -81,6 +82,115 @@ class CsCreator extends Component {
       Cs_KwListToDataBaseBtnState: false
     });
   };
+
+  _renderCsInputItem = () => (
+    <div className="CsCreator-AddItem">
+      <Button
+        type="primary"
+        icon={this.state.CsSwitchMode ? "profile" : "edit"}
+        onClick={() => {
+          this.setState({
+            CsSwitchMode: !this.state.CsSwitchMode,
+            AddCs_KwState: true,
+            SelectCsList: ""
+          });
+        }}
+      >
+        {this.state.CsSwitchMode ? "選擇Cs" : "自定義Cs"}
+      </Button>
+      {this.state.CsSwitchMode ? (
+        <Select
+          style={{ width: "100%" }}
+          className="CsCreator-SelectComponent"
+          labelInValue
+          onChange={value => {
+            //選擇Cs
+            this.setState({ SelectCsList: value.label, ArticlePreviewLoadingState: false });
+          }}
+        >
+          {this.state.CsAdd_SelectList}
+        </Select>
+      ) : (
+        <Input
+          style={{ width: "100%", marginLeft: 10 }}
+          placeholder="Cs"
+          value={this.state.SelectCsList}
+          onChange={value =>
+            this.setState({
+              //自定義Cs
+              SelectCsList: value.target.value
+            })
+          }
+        />
+      )}
+    </div>
+  );
+
+  _renderPkwSelectItem = () => (
+    <div className="CsCreator-AddItem">
+      <div>選擇pKw</div>
+      <Select
+        style={{ width: "87%", marginLeft: 10 }}
+        className="CsCreator-pKwSelectComponent"
+        allowClear={true}
+        mode="tags"
+        onChange={value => {
+          // pkw select list
+          this.setState({ SelectPkwList: value, AddCs_KwState: false });
+        }}
+        onDeselect={value => {
+          //標記顏色復原
+          this.setState({
+            ArticlePreview: this.state.ArticlePreview.replace(
+              new RegExp(`<span[^>]*>[${value}]+</span>`, "g"),
+              value
+            )
+          });
+        }}
+        onSelect={this.handlePkwSelect}
+      >
+        {this.state.CsAdd_CustomizeSelectComponent}
+      </Select>
+    </div>
+  );
+
+  _renderCsLvSelectItem = () => (
+    <div className="CsCreator-AddItem">
+      <div style={{ width: "30%" }}>
+        <Popover
+          placement={"bottom"}
+          title={"說明"}
+          content={
+            <div>
+              <p>sX → 不是Kw</p>
+              <p>sI → 口語Kw</p>
+              <p>iW → 通用Kw</p>
+              <p>tS → 特定Kw</p>
+            </div>
+          }
+        >
+          選擇Cs-Lv{"  "}
+          <Icon type="question-circle" />
+        </Popover>
+      </div>
+      <Select
+        style={{ width: "70%" }}
+        className="CsCreator-SelectComponent"
+        labelInValue
+        onChange={value => {
+          this.setState({ SelectCsLv: value.label });
+        }}
+      >
+        <Option key={"sX"}>{"sX"}</Option>
+        <Option key={"sI"}>{"sI"}</Option>
+        <Option key={"iW"}>{"iW"}</Option>
+        <Option key={"tS"}>{"tS"}</Option>
+      </Select>
+      <Button disabled={this.state.AddCs_KwState} className="CsCreator-AddBtn" onClick={this.handleAddCs_Kw}>
+        添加Cs_Kw
+      </Button>
+    </div>
+  );
 
   render() {
     const rowSelection = {
@@ -93,74 +203,9 @@ class CsCreator extends Component {
       <div className="CsCreator-Index">
         <div className="CsCreator-Item">
           <div className="CsCreator-Add">
-            <div className="CsCreator-AddItem">
-              <Button
-                type="primary"
-                icon={this.state.CsSwitchMode ? "profile" : "edit"}
-                onClick={() => {
-                  this.setState({
-                    CsSwitchMode: !this.state.CsSwitchMode,
-                    AddCs_KwState: true,
-                    SelectCsList: ""
-                  });
-                }}
-              >
-                {this.state.CsSwitchMode ? "選擇Cs" : "自定義Cs"}
-              </Button>
-              {this.state.CsSwitchMode ? (
-                <Select
-                  style={{ width: 150 }}
-                  className="CsCreator-SelectComponent"
-                  labelInValue
-                  onChange={this.handleCsSelect}
-                >
-                  {this.state.CsAdd_SelectList}
-                </Select>
-              ) : (
-                <Input
-                  style={{ width: 150, marginLeft: 10 }}
-                  placeholder="Cs"
-                  value={this.state.SelectCsList}
-                  onChange={value =>
-                    this.setState({
-                      SelectCsList: value.target.value
-                    })
-                  }
-                />
-              )}
-            </div>
-            <div className="CsCreator-AddItem">
-              <Select
-                style={{ width: "50%" }}
-                className="CsCreator-pKwSelectComponent"
-                allowClear={true}
-                mode="tags"
-                placeholder="pKw"
-                onChange={value => {
-                  // pkw select list
-                  this.setState({ SelectPkwList: value, AddCs_KwState: false });
-                }}
-                onDeselect={value => {
-                  //標記顏色復原
-                  this.setState({
-                    ArticlePreview: this.state.ArticlePreview.replace(
-                      new RegExp(`<span[^>]*>[${value}]+</span>`, "g"),
-                      value
-                    )
-                  });
-                }}
-                onSelect={this.handlePkwSelect}
-              >
-                {this.state.CsAdd_CustomizeSelectComponent}
-              </Select>
-              <Button
-                disabled={this.state.AddCs_KwState}
-                className="CsCreator-AddBtn"
-                onClick={this.handleAddCs_Kw}
-              >
-                添加Cs_Kw
-              </Button>
-            </div>
+            {this._renderCsInputItem()}
+            {this._renderPkwSelectItem()}
+            {this._renderCsLvSelectItem()}
           </div>
           <div className="CsCreator-ItemTableComponent">
             <Table
@@ -183,6 +228,11 @@ class CsCreator extends Component {
                   dataIndex: "Kw",
                   key: "Kw",
                   render: Kw => <span>{`${Kw}`}</span>
+                },
+                {
+                  title: "Lv",
+                  dataIndex: "Lv",
+                  key: "Lv"
                 }
               ]}
             />
