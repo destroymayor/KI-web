@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 
-//載入ant design 組件庫
-import { Input } from "antd";
-
 import HandleMessage from "./handleMessage";
 
 //載入socket.io client庫
@@ -90,8 +87,8 @@ class ChatRoom extends Component {
           {this.state.chats.map((chat, index) => <HandleMessage key={index} chat={chat} user={"user"} />)}
         </ul>
         <form className="input" onSubmit={e => this.submitMessage(e)}>
-          <Input placeholder="輸入內容" type="text" ref={"message"} />
-          <Input type="submit" value={"送出"} />
+          <input placeholder={"輸入訊息..."} type="text" ref={"message"} />
+          <input type="submit" value={"送出"} />
         </form>
       </div>
     );
