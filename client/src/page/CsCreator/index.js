@@ -128,7 +128,7 @@ class CsCreator extends Component {
 
   _renderPkwSelectItem = () => (
     <div className="CsCreator-AddItem">
-      <div>選擇pKw</div>
+      <div>pKw</div>
       <Select
         style={{ width: "87%", marginLeft: 10 }}
         className="CsCreator-pKwSelectComponent"
@@ -156,7 +156,7 @@ class CsCreator extends Component {
 
   _renderCsLvSelectItem = () => (
     <div className="CsCreator-AddItem">
-      <div style={{ width: "30%" }}>
+      <div style={{ width: "20%" }}>
         <Popover
           placement={"bottom"}
           title={"說明"}
@@ -169,12 +169,12 @@ class CsCreator extends Component {
             </div>
           }
         >
-          選擇Cs-Lv{"  "}
+          Cs-Lv{"  "}
           <Icon type="question-circle" />
         </Popover>
       </div>
       <Select
-        style={{ width: "70%" }}
+        style={{ width: "80%" }}
         className="CsCreator-SelectComponent"
         labelInValue
         onChange={value => {
@@ -187,7 +187,7 @@ class CsCreator extends Component {
         <Option key={"tS"}>{"tS"}</Option>
       </Select>
       <Button disabled={this.state.AddCs_KwState} className="CsCreator-AddBtn" onClick={this.handleAddCs_Kw}>
-        添加Cs_Kw
+        添加
       </Button>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./index.css";
-import logo from "../utils/logo.svg";
 
 //載入 router library
 import { Router, Route } from "react-router-dom";
@@ -21,13 +20,10 @@ class Routers extends Component {
       <Router history={history}>
         <div className="Index">
           <header className="Index-header">
-            <img src={logo} className="Index-logo" alt="logo" />
-            <h1 className="Index-title">Keyword Identify For Web</h1>
+            <h1 className="Index-title">Keyword Identify</h1>
           </header>
           <div className="Index-Content">
-            <div className="Index-Content-Menu">
-              <Menu />
-            </div>
+            <Menu />
             <div className="Index-Content-Page">
               <Route exact path="/" component={ChatRoom} />
               <Route path="/Ki" component={Ki} />

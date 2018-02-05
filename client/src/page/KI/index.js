@@ -194,10 +194,102 @@ class KI extends Component {
     });
   }
 
+  _renderBtnItem = () => (
+    <div className="ButtonItem">
+      <Buttons
+        disabled={this.state.FetchKeyWordHistoryDisabledState}
+        Text={"讀取歷史Kw庫"}
+        onClick={() => {
+          this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
+        }}
+      />
+      <Buttons
+        disabled={this.state.FetchjiebaListDisabledState}
+        Text={"透過TextRank算出pKw"}
+        onClick={() => {
+          this.Fetch_JiebaList();
+        }}
+      />
+      <Buttons
+        Text={"新增標記至資料庫"}
+        onClick={() => {
+          this.InsertTextTag();
+        }}
+      />
+      <Buttons
+        Text={"取消標記"}
+        onClick={() => {
+          this.RemoveTextTagRange();
+        }}
+      />
+    </div>
+  );
+
+  _renderTable = () => (
+    <div className="TableComponent">
+      {this.state.KwTotalLoadingState ? (
+        <Table
+          dataSource={this.state.KwTotal}
+          className="kwTable"
+          size="small"
+          rowKey={key => key.index}
+          columns={[
+            {
+              title: "Kw",
+              children: [
+                {
+                  title: "關鍵字",
+                  dataIndex: "keyword",
+                  key: "keyword"
+                },
+                {
+                  title: "出現頻率",
+                  dataIndex: "frequency",
+                  key: "frequency"
+                },
+                {
+                  title: "初始位置",
+                  dataIndex: "localtag",
+                  key: "localtag"
+                }
+              ]
+            }
+          ]}
+        />
+      ) : null}
+
+      {this.state.jiebaLoadingState ? (
+        <Table
+          dataSource={this.state.jiebaList}
+          className="pkwTable"
+          size="small"
+          rowKey={key => key.word}
+          columns={[
+            {
+              title: "pKw",
+              children: [
+                {
+                  title: "關鍵字",
+                  dataIndex: "word",
+                  key: "word"
+                },
+                {
+                  title: "權重值",
+                  dataIndex: "weight",
+                  key: "weight"
+                }
+              ]
+            }
+          ]}
+        />
+      ) : null}
+    </div>
+  );
+
   render() {
     return (
       <div className="Ki">
-        <h3>SourceText庫</h3>
+        <h3>SourceTx庫</h3>
         <div className="SelectComponent">
           <Select
             className="KI_selectComponent"
@@ -209,35 +301,7 @@ class KI extends Component {
             {this.state.SourceTextSelectItem}
           </Select>
         </div>
-        <div className="ButtonItem">
-          <Buttons
-            disabled={this.state.FetchKeyWordHistoryDisabledState}
-            Text={"讀取歷史Kw庫"}
-            onClick={() => {
-              this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
-            }}
-          />
-          <Buttons
-            disabled={this.state.FetchjiebaListDisabledState}
-            Text={"透過TextRank算出pKw"}
-            onClick={() => {
-              this.Fetch_JiebaList();
-            }}
-          />
-          <Buttons
-            Text={"新增標記至資料庫"}
-            onClick={() => {
-              this.InsertTextTag();
-            }}
-          />
-          <Buttons
-            Text={"取消標記"}
-            onClick={() => {
-              this.RemoveTextTagRange();
-            }}
-          />
-        </div>
-
+        {this._renderBtnItem()}
         <div id="SourceText">
           {this.state.SourceTextLoadingState ? (
             <span
@@ -249,64 +313,7 @@ class KI extends Component {
             <Icon type="loading" style={{ fontSize: 24 }} spin />
           )}
         </div>
-        <div className="TableComponent">
-          {this.state.KwTotalLoadingState ? (
-            <Table
-              dataSource={this.state.KwTotal}
-              className="kwTable"
-              size="small"
-              rowKey={key => key.index}
-              columns={[
-                {
-                  title: "Kw",
-                  children: [
-                    {
-                      title: "關鍵字",
-                      dataIndex: "keyword",
-                      key: "keyword"
-                    },
-                    {
-                      title: "出現頻率",
-                      dataIndex: "frequency",
-                      key: "frequency"
-                    },
-                    {
-                      title: "初始位置",
-                      dataIndex: "localtag",
-                      key: "localtag"
-                    }
-                  ]
-                }
-              ]}
-            />
-          ) : null}
-
-          {this.state.jiebaLoadingState ? (
-            <Table
-              dataSource={this.state.jiebaList}
-              className="pkwTable"
-              size="small"
-              rowKey={key => key.word}
-              columns={[
-                {
-                  title: "pKw",
-                  children: [
-                    {
-                      title: "關鍵字",
-                      dataIndex: "word",
-                      key: "word"
-                    },
-                    {
-                      title: "權重值",
-                      dataIndex: "weight",
-                      key: "weight"
-                    }
-                  ]
-                }
-              ]}
-            />
-          ) : null}
-        </div>
+        {this._renderTable()}
       </div>
     );
   }

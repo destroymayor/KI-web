@@ -4,10 +4,13 @@ const path = require("path");
 
 //載入壓縮組件
 const compression = require("compression");
+//載入Security插件
+const helmet = require("helmet");
 //載入路由配置
 const routes = require("./server/route");
 
 app.use(compression());
+app.use(helmet());
 app.use(express.static(path.join(__dirname, "client/build")));
 routes(app);
 

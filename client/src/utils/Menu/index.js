@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./index.css";
 
 //載入react router組件庫
 import { Link } from "react-router-dom";
@@ -12,29 +13,32 @@ const MenuItemGroup = Menu.ItemGroup;
 class Menus extends Component {
   state = {
     RoleSwitch_KeywordIdentifyState: true,
-    RoleSwitch_CsCreatorState: true
+    RoleSwitch_CsCreatorState: true,
+    RoleSwitch_Name: "User"
   };
 
   handleRoleSwitch = value => {
-    console.log(value.key);
     switch (value.key) {
       case "User":
         history.push("/");
         this.setState({
           RoleSwitch_KeywordIdentifyState: true,
-          RoleSwitch_CsCreatorState: true
+          RoleSwitch_CsCreatorState: true,
+          RoleSwitch_Name: value.key
         });
         break;
       case "Trainer":
         this.setState({
           RoleSwitch_KeywordIdentifyState: false,
-          RoleSwitch_CsCreatorState: false
+          RoleSwitch_CsCreatorState: false,
+          RoleSwitch_Name: value.key
         });
         break;
       case "Expert":
         this.setState({
           RoleSwitch_KeywordIdentifyState: false,
-          RoleSwitch_CsCreatorState: false
+          RoleSwitch_CsCreatorState: false,
+          RoleSwitch_Name: value.key
         });
         break;
       default:
@@ -44,19 +48,26 @@ class Menus extends Component {
 
   render() {
     return (
-      <div>
+      <div className="Menu">
         <Menu
-          mode="inline"
+          style={{ width: "100%" }}
+          mode="horizontal"
           onSelect={this.handleRoleSwitch}
           defaultSelectedKeys={["User"]}
           defaultOpenKeys={["RoleSwitch"]}
         >
+          <Menu.Item key="home">
+            <Link to="/">
+              <Icon type="home" />
+              首頁
+            </Link>
+          </Menu.Item>
           <SubMenu
-            key="RoleSwitch"
+            key="horizontal"
             title={
               <span>
                 <Icon type="user" />
-                角色切換
+                當前角色 {this.state.RoleSwitch_Name}
               </span>
             }
           >
@@ -64,8 +75,6 @@ class Menus extends Component {
             <Menu.Item key="Trainer">Trainer</Menu.Item>
             <Menu.Item key="Expert">Expert</Menu.Item>
           </SubMenu>
-        </Menu>
-        <Menu mode="vertical">
           <SubMenu
             key="MenuRouter"
             title={
@@ -75,13 +84,7 @@ class Menus extends Component {
               </span>
             }
           >
-            <Menu.Item key="home">
-              <Link to="/">
-                <Icon type="home" />
-                首頁
-              </Link>
-            </Menu.Item>
-            <MenuItemGroup key="group1" title="主要功能">
+            <MenuItemGroup key="MenuItemMain" title="主要功能">
               <Menu.Item disabled={this.state.RoleSwitch_KeywordIdentifyState} key="Ki">
                 <Link to="/Ki">Keyword Identify</Link>
               </Menu.Item>

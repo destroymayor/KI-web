@@ -16,6 +16,7 @@
 /* right區塊 */
 .CsCreator-ArticlePreviewComponent {
   flex: 1;
+  margin: 10px 10px 0 0;
 }
 
 .CsCreator-Add {
@@ -32,14 +33,13 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 10px 10px 0 10px;
   height: 50px;
 }
 
 .CsCreator-ItemTableComponent {
   align-self: center;
+  margin: 10px 10px 0 10px;
 }
 
 .CsCreator-SelectComponent {

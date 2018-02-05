@@ -1,3 +1,3 @@
 module.exports = app => {
-  app.use("/jieba", require("./jieba"));
+  app.use("/jieba", require("./jieba/index"));
 };

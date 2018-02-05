@@ -54,7 +54,7 @@ class ChatRoom extends Component {
           }
         ])
       });
-      console.log("使用者:", data.username, "內容", data.content);
+      console.log("id:", this.socket.io.engine.id, "使用者:", data.username, "內容", data.content);
     });
   }
 
