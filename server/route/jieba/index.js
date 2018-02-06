@@ -9,11 +9,13 @@ router.get("/", (req, res) => {
   //文章參數
   let pages = req.query.page;
 
-  db.query("SELECT * FROM test.sourcetext", (error, results, fields) => {
-    if (error) throw error;
-    console.log(results[pages - 1]);
-    res.json(nodejieba.extract(results[pages - 1].content, 20));
-  });
+  const sql = "SELECT * FROM test.sourcetext";
+  db.fetchData((err, result) => {
+    if (err) throw err;
+    console.log(result[pages - 1]);
+
+    res.json(nodejieba.extract(result[pages - 1].content, 20));
+  }, sql);
 });
 
 module.exports = router;

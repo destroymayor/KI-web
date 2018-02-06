@@ -3,10 +3,11 @@ const router = require("express").Router();
 const db = require("../../db/dbConfig");
 
 router.get("/", (req, res) => {
-  db.query("SELECT * FROM test.sourcetext", (error, results, fields) => {
-    if (error) throw error;
-    res.json(results);
-  });
+  const sql = "SELECT * FROM test.sourcetext";
+  db.fetchData((err, result) => {
+    if (err) throw err;
+    res.json(result);
+  }, sql);
 });
 
 module.exports = router;
