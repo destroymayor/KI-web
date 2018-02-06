@@ -27,6 +27,7 @@ class KI extends Component {
     jiebaList: [],
     jiebaLoadingState: false,
     FetchjiebaListDisabledState: true,
+    FetchjiebaListLoadingState: false,
     //復原Ur標註
     UrTagRecovery: "",
     //人工標記集合
@@ -35,7 +36,8 @@ class KI extends Component {
     KwTotal: [],
     KwTotalLoadingState: false,
     //讀取歷史kw庫按鈕狀態
-    FetchKeyWordHistoryDisabledState: true
+    FetchKeyWordHistoryDisabledState: true,
+    FetchKeyWordHistoryLoadingState: false
   };
 
   componentDidMount() {
@@ -68,13 +70,15 @@ class KI extends Component {
         SourceTextLocalTags: responseData[0].content
       });
     } catch (error) {
-      console.log(error);
+      console.log("fetch source text error", error);
     }
   }
 
   //讀取歷史kw庫資料
   async _FetchKeyWordHistory() {
     this.setState({
+      // loading 讀取歷史kw庫按鈕
+      FetchKeyWordHistoryLoadingState: true,
       //close 讀取歷史kw庫按鈕
       FetchKeyWordHistoryDisabledState: true
     });
@@ -115,17 +119,19 @@ class KI extends Component {
       this.setState({
         KwTotal: this.state.KwTotal.filter(value => {
           return value.keyword !== null;
-        })
+        }),
+        // loading 讀取歷史kw庫按鈕
+        FetchKeyWordHistoryLoadingState: false
       });
     } catch (error) {
-      console.log(error);
+      console.log("fetch keyword history error", error);
     }
   }
 
   // jieba
   async Fetch_JiebaList() {
     // fetch jieba button state
-    this.setState({ FetchjiebaListDisabledState: true });
+    this.setState({ FetchjiebaListDisabledState: true, FetchjiebaListLoadingState: true });
     try {
       const fetchJiebaList = await fetch("/jieba?page=" + this.state.SourceTextSelectedOption);
       const responseData = await fetchJiebaList.json();
@@ -140,8 +146,10 @@ class KI extends Component {
       });
 
       //render jieba table view
-      this.setState({ jiebaLoadingState: true });
-    } catch (error) {}
+      this.setState({ jiebaLoadingState: true, FetchjiebaListLoadingState: false });
+    } catch (error) {
+      console.log("fetch jieba error", error);
+    }
   }
 
   //handle 下拉組件
@@ -157,9 +165,11 @@ class KI extends Component {
       jiebaList: [],
       jiebaLoadingState: false,
       //open 讀取kw按鈕狀態
+      FetchKeyWordHistoryLoadingState: false,
       FetchKeyWordHistoryDisabledState: false,
       //open jieba 按鈕狀態
-      FetchjiebaListDisabledState: false
+      FetchjiebaListDisabledState: false,
+      FetchjiebaListLoadingState: false
     });
   };
 
@@ -190,6 +200,8 @@ class KI extends Component {
   _renderBtnItem = () => (
     <div className="ButtonItem">
       <Buttons
+        type="primary"
+        loading={this.state.FetchKeyWordHistoryLoadingState}
         disabled={this.state.FetchKeyWordHistoryDisabledState}
         Text={"讀取歷史Kw庫"}
         onClick={() => {
@@ -197,6 +209,7 @@ class KI extends Component {
         }}
       />
       <Buttons
+        loading={this.state.FetchjiebaListLoadingState}
         disabled={this.state.FetchjiebaListDisabledState}
         Text={"透過TextRank算出pKw"}
         onClick={() => {

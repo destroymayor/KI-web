@@ -4,9 +4,9 @@ import Button from "antd/lib/button";
 
 class Buttons extends Component {
   render() {
-    const { Text, Type, onClick, disabled } = this.props;
+    const { Text, Type, onClick, loading, disabled } = this.props;
     return (
-      <Button className="KI_touch" disabled={disabled} type={Type} onClick={onClick}>
+      <Button className="KI_touch" loading={loading} disabled={disabled} type={Type} onClick={onClick}>
         {Text}
       </Button>
     );
