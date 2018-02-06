@@ -4,9 +4,6 @@ import "./index.css";
 //載入ant design 組件庫
 import { Icon, Select, Table } from "antd";
 
-//載入firebase api
-import FireBaseApp from "../../db/firebaseAPI";
-
 import Buttons from "../../utils/components/Buttons";
 
 //Select component option
@@ -42,93 +39,93 @@ class KI extends Component {
   };
 
   componentDidMount() {
-    //初始化firebase
-    this.ref = FireBaseApp.database();
-    //連接SourceText庫
-    this.ref.ref("SourceText/").on("value", this._FetchSourceText);
-  }
-
-  componentWillUnmount() {
-    if (this.ref) {
-      //斷開firebase
-      this.ref.ref("SourceText/").off("value", this._FetchSourceText);
-      this.ref.ref("/KeyWord").off("value", this._FetchKeyWordHistory);
-    }
+    this._FetchSourceText();
   }
 
   //讀取sourceText庫資料
-  _FetchSourceText = snapshot => {
-    const SourceTextArray = [];
-    snapshot.forEach(val => {
-      SourceTextArray.push(val.val());
-    });
+  async _FetchSourceText() {
+    try {
+      const fetchSourceText = await fetch("/sourcetext");
+      const responseData = await fetchSourceText.json();
+      //select option
+      responseData.forEach((value, index) => {
+        this.state.SourceTextSelectItem.push(
+          <Option key={index} value={value.content}>
+            {index + 1}
+          </Option>
+        );
+      });
 
-    //select option
-    SourceTextArray.forEach((value, index) => {
-      this.state.SourceTextSelectItem.push(
-        <Option key={index} value={value}>
-          {index + 1}
-        </Option>
-      );
-    });
-
-    this.setState({
-      //loading state
-      SourceTextLoadingState: true,
-      //open 讀取歷史kw庫按鈕
-      FetchKeyWordHistoryDisabledState: false,
-      //open jieba 按鈕狀態
-      FetchjiebaListDisabledState: false,
-      SourceText: SourceTextArray[0],
-      //標出tx庫位置的集合
-      SourceTextLocalTags: SourceTextArray[0]
-    });
-  };
+      this.setState({
+        //loading state
+        SourceTextLoadingState: true,
+        //open 讀取歷史kw庫按鈕
+        FetchKeyWordHistoryDisabledState: false,
+        //open jieba 按鈕狀態
+        FetchjiebaListDisabledState: false,
+        SourceText: responseData[0].content,
+        //標出tx庫位置的集合
+        SourceTextLocalTags: responseData[0].content
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   //讀取歷史kw庫資料
-  _FetchKeyWordHistory = async snapshot => {
-    const KwHistoryArray = [];
-    await snapshot.forEach(val => {
-      KwHistoryArray.push(val.val());
-    });
-
-    await this.setState({
-      //儲存kw歷史庫
-      KwHistory: KwHistoryArray,
-      //讀取歷史kw庫並標出顏色(綠色)
-      SourceText: this.state.SourceText.replace(
-        new RegExp(KwHistoryArray.join("|"), "g"),
-        val => `<span style="color:#00A600;">${val}</span>`
-      ),
+  async _FetchKeyWordHistory() {
+    this.setState({
       //close 讀取歷史kw庫按鈕
-      FetchKeyWordHistoryDisabledState: true,
-      //close loading 按鈕
-      KwTotalLoadingState: true
+      FetchKeyWordHistoryDisabledState: true
     });
-
-    //kw頻率及位置
-    await this.state.KwHistory.forEach((value, index) => {
-      const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
-      this.state.KwTotal.push({
-        index: index,
-        //kw
-        keyword: frequencyState ? null : value,
-        //出現頻率
-        frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
-        //出現位置字元
-        localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+    const KwHistoryArray = [];
+    try {
+      const fetchKeywordHistory = await fetch("/keywordhistory");
+      const responseData = await fetchKeywordHistory.json();
+      responseData.forEach((value, index) => {
+        KwHistoryArray.push(value.name);
+        this.setState({
+          //儲存kw歷史庫
+          KwHistory: KwHistoryArray,
+          //讀取歷史kw庫並標出顏色(綠色)
+          SourceText: this.state.SourceText.replace(
+            new RegExp(KwHistoryArray.join("|"), "g"),
+            val => `<span style="color:#00A600;">${val}</span>`
+          ),
+          //render keyword table view
+          KwTotalLoadingState: true
+        });
       });
-    });
 
-    //過濾null值
-    await this.setState({
-      KwTotal: this.state.KwTotal.filter(value => {
-        return value.keyword !== null;
-      })
-    });
-  };
+      //kw頻率及位置
+      this.state.KwHistory.forEach((value, index) => {
+        const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
+        this.state.KwTotal.push({
+          index: index,
+          //kw
+          keyword: frequencyState ? null : value,
+          //出現頻率
+          frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
+          //出現位置字元
+          localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+        });
+      });
 
+      //過濾null值
+      this.setState({
+        KwTotal: this.state.KwTotal.filter(value => {
+          return value.keyword !== null;
+        })
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // jieba
   async Fetch_JiebaList() {
+    // fetch jieba button state
+    this.setState({ FetchjiebaListDisabledState: true });
     try {
       const fetchJiebaList = await fetch("/jieba?page=" + this.state.SourceTextSelectedOption);
       const responseData = await fetchJiebaList.json();
@@ -142,10 +139,8 @@ class KI extends Component {
         this.state.jiebaList.push({ word: value.word, weight: value.weight.toFixed(2) });
       });
 
-      this.setState({
-        jiebaLoadingState: true,
-        FetchjiebaListDisabledState: true
-      });
+      //render jieba table view
+      this.setState({ jiebaLoadingState: true });
     } catch (error) {}
   }
 
@@ -180,9 +175,7 @@ class KI extends Component {
   }
 
   //Ur人工新增
-  InsertTextTag() {
-    this.ref.ref("MC_pKw/").push({ pKw1: this.state.GetSelectedTextList });
-  }
+  InsertTextTag() {}
 
   //復原Ur選取標記
   RemoveTextTagRange() {
@@ -200,7 +193,7 @@ class KI extends Component {
         disabled={this.state.FetchKeyWordHistoryDisabledState}
         Text={"讀取歷史Kw庫"}
         onClick={() => {
-          this.ref.ref("/KeyWord").on("value", this._FetchKeyWordHistory);
+          this._FetchKeyWordHistory();
         }}
       />
       <Buttons
