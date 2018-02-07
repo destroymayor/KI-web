@@ -3,7 +3,7 @@ const nodejieba = require("nodejieba");
 //載入字典
 nodejieba.load(__dirname + "./jieba_Dictionary/Jieba_TW.utf8");
 
-const db = require("../../db/dbConfig");
+const db = require("../../db/DBConfig");
 
 router.get("/", (req, res) => {
   //文章參數

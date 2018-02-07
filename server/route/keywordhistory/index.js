@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const db = require("../../db/dbConfig");
+const db = require("../../db/DBConfig");
 
 router.get("/", (req, res) => {
   const sql = "SELECT * FROM test.Keyword";

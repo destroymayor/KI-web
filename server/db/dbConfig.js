@@ -27,14 +27,26 @@ exports.fetchData = (callback, sqlQuery) => {
       } else {
         callback(err, results);
         console.log("\nConnection closed \n-----------------");
-        connection.release();
       }
     });
   });
 };
 
+exports.Query = sqlQuery => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      connection.query(sqlQuery, (err, results, fields) => {
+        if (err) return reject(err);
+
+        resolve(results);
+        console.log("\nConnection closed \n-----------------");
+      });
+    });
+  });
+};
+
 //insert && update && delete
-exports.insertData = (callback, sqlQuery) => {
+exports.CRUDData = (callback, sqlQuery) => {
   console.log("\n SQL Query", sqlQuery);
   pool.getConnection((err, connection) => {
     connection.query(sqlQuery, (err, results) => {

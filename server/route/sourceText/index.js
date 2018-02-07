@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const db = require("../../db/dbConfig");
+const db = require("../../db/DBConfig");
 
 router.get("/", (req, res) => {
   const sql = "SELECT * FROM test.sourcetext";
@@ -8,6 +8,10 @@ router.get("/", (req, res) => {
     if (err) throw err;
     res.json(result);
   }, sql);
+
+  db.Query(sql).then(row => {
+    console.log(row);
+  });
 });
 
 module.exports = router;
