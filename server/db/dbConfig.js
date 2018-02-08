@@ -1,13 +1,5 @@
 const mysql = require("mysql");
 
-const connection = mysql.createConnection({
-  port: 3306,
-  host: "140.125.84.189",
-  user: "root",
-  password: "mismb207",
-  database: "china_sea"
-});
-
 //連線池
 const pool = mysql.createPool({
   host: "140.125.84.189",
@@ -32,26 +24,10 @@ exports.fetchData = (callback, sqlQuery) => {
   });
 };
 
-//insert && update && delete
-exports.CRUDData = (callback, sqlQuery) => {
-  console.log("\n SQL Query", sqlQuery);
-  pool.getConnection((err, connection) => {
-    connection.query(sqlQuery, (err, results) => {
-      if (err) {
-        console.log("err message", err.message);
-      } else {
-        callback(err, results);
-        console.log("\n CRUD successfully \n---------------------");
-        connection.release();
-      }
-    });
-  });
-};
-
 exports.Query = sqlQuery => {
   return new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
-      connection.query(sqlQuery, (err, results, fields) => {
+      connection.query(sqlQuery, args, (err, results) => {
         if (err) return reject(err);
 
         resolve(results);
@@ -60,3 +36,29 @@ exports.Query = sqlQuery => {
     });
   });
 };
+
+exports.Close = () => {
+  return new Promise((resolve, reject) => {
+    pool.end(err => {
+      if (err) return reject(err);
+
+      resolve();
+    });
+  });
+};
+
+/*
+example
+多次查詢
+let someRows,otherRows;
+
+Query('SELECT * FROM table').then(rows => {
+  someRows = rows;
+  return Query('SELECT * FROM other_table');
+}).then(rows => {
+  otherRows = rows;
+  return Close();
+}).then(() => {
+  其他操作
+})
+*/

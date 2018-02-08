@@ -2,79 +2,98 @@ import React, { Component } from "react";
 import "./index.css";
 import history from "../RouterHistory";
 
-import Buttons from "../../utils/components/Buttons";
-import { Input, Icon, Select } from "antd";
+import { Button, Form, Input, Icon, Select } from "antd";
+const FormItem = Form.Item;
 const Option = Select.Option;
+
+function hasErrors(fieldsError) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
 
 class Login extends Component {
   state = {
-    Pages: "Login",
+    PageName: "",
     LoginUserName: null,
-    LoginPassWord: null,
-    LoginDisabledState: true
+    LoginPassWord: null
   };
 
+  componentDidMount() {
+    this.props.form.validateFields();
+  }
+
   handlePageSelect = value => {
-    this.setState({
-      Pages: value,
-      LoginDisabledState: false
+    this.setState({ PageName: value });
+  };
+
+  handleLoginSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.setState({
+          LoginUserName: values.userName,
+          LoginPassWord: values.password
+        });
+        switch (this.state.PageName) {
+          case "User":
+            history.push("/Chat");
+            break;
+          case "Trainer":
+            history.push("/Login");
+            break;
+          case "Expert":
+            history.push("/Ki");
+            break;
+          default:
+            break;
+        }
+      }
     });
   };
 
-  handleLogin = () => {
-    switch (this.state.Pages) {
-      case "User":
-        history.push("/Chat");
-        break;
-      case "Trainer":
-        history.push("/Login");
-        break;
-      case "Expert":
-        history.push("/Ki");
-        break;
-      default:
-        break;
-    }
-  };
-
   render() {
+    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const userNameError = isFieldTouched("userName") && getFieldError("userName");
+    const passwordError = isFieldTouched("password") && getFieldError("password");
     return (
       <div className="Login">
-        <Select
-          placeholder={"選擇使用者"}
-          ref="SelectPage"
-          style={{ width: 150 }}
-          onChange={this.handlePageSelect}
-        >
-          <Option value={"User"}>User</Option>
-          <Option value={"Trainer"}>Trainer</Option>
-          <Option value={"Expert"}>Expert</Option>
-        </Select>
-        <div className={"Login-Input"}>
-          <Input
-            prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
-            value={this.state.LoginUserName}
-            onChange={e => {
-              this.setState({ LoginUserName: e.target.value });
-            }}
-            placeholder="Username"
-          />
-          <Input
-            prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
-            type="password"
-            value={this.state.LoginPassWord}
-            onChange={e => {
-              this.setState({ LoginPassWord: e.target.value });
-            }}
-            placeholder="Password"
-          />
+        <div className="Login-SelectComponent">
+          <Select placeholder={"選擇使用者"} style={{ width: 190 }} onChange={this.handlePageSelect}>
+            <Option value={"User"}>User</Option>
+            <Option value={"Trainer"}>Trainer</Option>
+            <Option value={"Expert"}>Expert</Option>
+          </Select>
         </div>
-        <div className="Login-Btn">
-          <Buttons disabled={this.state.LoginDisabledState} Text={"登入"} onClick={this.handleLogin} />
-        </div>
+        <Form layout="vertical" onSubmit={this.handleLoginSubmit}>
+          <FormItem validateStatus={userNameError ? "error" : ""} help={userNameError || ""}>
+            {getFieldDecorator("userName", {
+              rules: [{ required: true, message: "請輸入你的帳號!" }]
+            })(
+              <Input
+                prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
+                placeholder="Username"
+              />
+            )}
+          </FormItem>
+          <FormItem validateStatus={passwordError ? "error" : ""} help={passwordError || ""}>
+            {getFieldDecorator("password", {
+              rules: [{ required: true, message: "請輸入你的密碼!" }]
+            })(
+              <Input
+                prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
+                type="password"
+                placeholder="Password"
+              />
+            )}
+          </FormItem>
+          <FormItem>
+            <Button htmlType="submit" disabled={hasErrors(getFieldsError())}>
+              登入
+            </Button>
+          </FormItem>
+        </Form>
       </div>
     );
   }
 }
 
-export default Login;
+export default Form.create()(Login);
