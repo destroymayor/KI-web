@@ -4,6 +4,7 @@ import "./index.css";
 //載入ant design 組件庫
 import { Icon, Select, Table } from "antd";
 
+import Menu from "../../utils/Menu/index";
 import Buttons from "../../utils/components/Buttons";
 
 //Select component option
@@ -295,6 +296,7 @@ class KI extends Component {
   render() {
     return (
       <div className="Ki">
+        <Menu renderPage="Expert" />
         <h3>SourceTx庫</h3>
         <div className="SelectComponent">
           <Select

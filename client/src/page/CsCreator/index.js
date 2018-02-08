@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.css";
 
-//import FireBaseApp from "../../db/firebaseAPI";
+import Menu from "../../utils/Menu/index";
 import { Button, Collapse, Icon, Input, Select, Popover, Table } from "antd";
 // Select component option
 const Option = Select.Option;
@@ -201,6 +201,7 @@ class CsCreator extends Component {
 
     return (
       <div className="CsCreator-Index">
+        <Menu renderPage="Expert" />
         <div className="CsCreator-Item">
           <div className="CsCreator-Add">
             {this._renderCsInputItem()}

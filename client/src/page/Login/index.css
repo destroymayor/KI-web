@@ -1,0 +1,23 @@
+.Login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.Login-Input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.Login-Input input {
+  margin: 10px;
+}
+
+.Login-Btn {
+  margin-top: 20px;
+}
