@@ -32,19 +32,6 @@ exports.fetchData = (callback, sqlQuery) => {
   });
 };
 
-exports.Query = sqlQuery => {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      connection.query(sqlQuery, (err, results, fields) => {
-        if (err) return reject(err);
-
-        resolve(results);
-        console.log("\nConnection closed \n-----------------");
-      });
-    });
-  });
-};
-
 //insert && update && delete
 exports.CRUDData = (callback, sqlQuery) => {
   console.log("\n SQL Query", sqlQuery);
@@ -57,6 +44,19 @@ exports.CRUDData = (callback, sqlQuery) => {
         console.log("\n CRUD successfully \n---------------------");
         connection.release();
       }
+    });
+  });
+};
+
+exports.Query = sqlQuery => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      connection.query(sqlQuery, (err, results, fields) => {
+        if (err) return reject(err);
+
+        resolve(results);
+        console.log("\nConnection closed \n-----------------");
+      });
     });
   });
 };
