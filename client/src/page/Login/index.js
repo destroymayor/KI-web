@@ -68,10 +68,7 @@ class Login extends Component {
             {getFieldDecorator("userName", {
               rules: [{ required: true, message: "請輸入你的帳號!" }]
             })(
-              <Input
-                prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
-                placeholder="Username"
-              />
+              <Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="帳號" />
             )}
           </FormItem>
           <FormItem validateStatus={passwordError ? "error" : ""} help={passwordError || ""}>
@@ -81,7 +78,7 @@ class Login extends Component {
               <Input
                 prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
                 type="password"
-                placeholder="Password"
+                placeholder="密碼"
               />
             )}
           </FormItem>

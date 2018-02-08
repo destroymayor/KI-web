@@ -6,11 +6,12 @@ import { Icon, Select, Table } from "antd";
 
 import Menu from "../../utils/Menu/index";
 import Buttons from "../../utils/components/Buttons";
+import { KwHistoryTable, JiebaTable } from "./component/Table";
 
 //Select component option
 const Option = Select.Option;
 
-class KI extends Component {
+class KeyWordIdentify extends Component {
   state = {
     //Loading State
     SourceTextLoadingState: false,
@@ -232,67 +233,6 @@ class KI extends Component {
     </div>
   );
 
-  _renderTable = () => (
-    <div className="TableComponent">
-      {this.state.KwTotalLoadingState ? (
-        <Table
-          dataSource={this.state.KwTotal}
-          className="kwTable"
-          size="small"
-          rowKey={key => key.index}
-          columns={[
-            {
-              title: "Kw",
-              children: [
-                {
-                  title: "關鍵字",
-                  dataIndex: "keyword",
-                  key: "keyword"
-                },
-                {
-                  title: "出現頻率",
-                  dataIndex: "frequency",
-                  key: "frequency"
-                },
-                {
-                  title: "初始位置",
-                  dataIndex: "localtag",
-                  key: "localtag"
-                }
-              ]
-            }
-          ]}
-        />
-      ) : null}
-
-      {this.state.jiebaLoadingState ? (
-        <Table
-          dataSource={this.state.jiebaList}
-          className="pkwTable"
-          size="small"
-          rowKey={key => key.word}
-          columns={[
-            {
-              title: "pKw",
-              children: [
-                {
-                  title: "關鍵字",
-                  dataIndex: "word",
-                  key: "word"
-                },
-                {
-                  title: "權重值",
-                  dataIndex: "weight",
-                  key: "weight"
-                }
-              ]
-            }
-          ]}
-        />
-      ) : null}
-    </div>
-  );
-
   render() {
     return (
       <div className="Ki">
@@ -321,10 +261,13 @@ class KI extends Component {
             <Icon type="loading" style={{ fontSize: 24 }} spin />
           )}
         </div>
-        {this._renderTable()}
+        <div className="TableComponent">
+          {this.state.KwTotalLoadingState ? <KwHistoryTable dataSource={this.state.KwTotal} /> : null}
+          {this.state.jiebaLoadingState ? <JiebaTable dataSource={this.state.jiebaList} /> : null}
+        </div>
       </div>
     );
   }
 }
 
-export default KI;
+export default KeyWordIdentify;

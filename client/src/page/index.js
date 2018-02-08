@@ -10,7 +10,7 @@ import Login from "./Login/index";
 //載入 ChatRoom
 import ChatRoom from "./Chat/index";
 //載入 Keyword Identify page
-import Ki from "./KI/index";
+import KeyWordIdentify from "./KeyWordIdentify/index";
 //載入CsCreator page
 import CsCreator from "./CsCreator/index";
 
@@ -19,7 +19,7 @@ class Routers extends Component {
     <div className="Index-Content-Page">
       <Route exact path="/" component={Login} />
       <Route path="/Chat" component={ChatRoom} />
-      <Route path="/Ki" component={Ki} />
+      <Route path="/Ki" component={KeyWordIdentify} />
       <Route path="/CsCreator" component={CsCreator} />
     </div>
   );
