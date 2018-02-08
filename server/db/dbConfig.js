@@ -13,6 +13,7 @@ const pool = mysql.createPool({
 exports.fetchData = (callback, sqlQuery) => {
   console.log("\n SQL Query", sqlQuery);
   pool.getConnection((err, connection) => {
+    if (err) throw err;
     connection.query(sqlQuery, (err, results, fields) => {
       if (err) {
         console.log("err message", err.message);

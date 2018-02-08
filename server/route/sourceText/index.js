@@ -8,10 +8,6 @@ router.get("/", (req, res) => {
     if (err) throw err;
     res.json(result);
   }, sql);
-
-  db.Query(sql).then(row => {
-    console.log(row);
-  });
 });
 
 module.exports = router;
