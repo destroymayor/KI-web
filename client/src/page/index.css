@@ -21,12 +21,6 @@
   font-size: large;
 }
 
-.Index-Content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .Index-Content-Page {
   flex: 3;
   display: flex;

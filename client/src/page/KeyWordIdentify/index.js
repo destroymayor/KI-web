@@ -194,12 +194,12 @@ class KeyWordIdentify extends Component {
 
   //復原Ur選取標記
   RemoveTextTagRange() {
-    // this.setState({
-    //   SourceText: this.state.SourceText.replace(
-    //     this.state.UrTagRecovery,
-    //     `<span style="backgroundColor:rgba(255,255,255,0);">${this.state.UrTagRecovery}</span>`
-    //   )
-    // });
+    this.setState({
+      SourceText: this.state.SourceText.replace(
+        this.state.UrTagRecovery,
+        `<span style="backgroundColor:rgba(255,255,255,0);">${this.state.UrTagRecovery}</span>`
+      )
+    });
   }
 
   _renderBtnItem = () => (
@@ -240,8 +240,9 @@ class KeyWordIdentify extends Component {
     return (
       <div className="Ki">
         <Menu renderPage="Expert" />
-        <h3>SourceTx庫</h3>
+
         <div className="SelectComponent">
+          <p>選擇文章</p>
           <Select
             className="KI_selectComponent"
             style={{ width: "20%" }}
@@ -253,7 +254,7 @@ class KeyWordIdentify extends Component {
           </Select>
         </div>
         {this._renderBtnItem()}
-        <div id="SourceText">
+        <div className="SourceText">
           {this.state.SourceTextLoadingState ? (
             <span
               id="SourceTextItem"

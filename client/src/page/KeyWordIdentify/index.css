@@ -1,33 +1,32 @@
 .Ki {
   display: flex;
   flex-direction: column;
-  text-align: center;
   justify-content: center;
-}
-
-/* tx庫 */
-#SourceText {
-  margin: 20px;
-}
-
-#SourceTextItem {
-  color: #222;
 }
 
 /* 下拉組件 */
-
 .SelectComponent {
-  display: flex;
-  justify-content: center;
-}
-
-.ReactSelect {
-  width: 40%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* 按鈕item */
 .ButtonItem button {
   margin: 10px;
+}
+
+/* tx庫 */
+.SourceText {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#SourceTextItem {
+  background: rgb(240, 240, 240);
+  padding: 10px;
+  border-radius: 20px;
+  width: 50%;
 }
 
 /* Table */
