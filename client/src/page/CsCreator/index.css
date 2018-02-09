@@ -6,6 +6,11 @@
   justify-content: center;
 }
 
+.CsCreator-IndexItem {
+  display: flex;
+  justify-content: center;
+}
+
 /* left區塊 */
 .CsCreator-Item {
   flex: 1;

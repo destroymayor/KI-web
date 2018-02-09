@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./index.css";
 
 //載入ant design 組件庫
-import { Icon, Select, Table } from "antd";
+import { Icon, Select, message } from "antd";
 
 import Menu from "../../utils/Menu/index";
 import Buttons from "../../utils/components/Buttons";
@@ -73,6 +73,7 @@ class KeyWordIdentify extends Component {
       });
     } catch (error) {
       console.log("fetch source text error", error);
+      message.error("無法連接，請稍後再試!");
     }
   }
 
@@ -127,6 +128,7 @@ class KeyWordIdentify extends Component {
       });
     } catch (error) {
       console.log("fetch keyword history error", error);
+      message.error("無法連接，請稍後再試!");
     }
   }
 
@@ -151,6 +153,7 @@ class KeyWordIdentify extends Component {
       this.setState({ jiebaLoadingState: true, FetchjiebaListLoadingState: false });
     } catch (error) {
       console.log("fetch jieba error", error);
+      message.error("無法連接，請稍後再試!");
     }
   }
 
@@ -191,12 +194,12 @@ class KeyWordIdentify extends Component {
 
   //復原Ur選取標記
   RemoveTextTagRange() {
-    this.setState({
-      SourceText: this.state.SourceText.replace(
-        this.state.UrTagRecovery,
-        `<span style="backgroundColor:rgba(255,255,255,0);">${this.state.UrTagRecovery}</span>`
-      )
-    });
+    // this.setState({
+    //   SourceText: this.state.SourceText.replace(
+    //     this.state.UrTagRecovery,
+    //     `<span style="backgroundColor:rgba(255,255,255,0);">${this.state.UrTagRecovery}</span>`
+    //   )
+    // });
   }
 
   _renderBtnItem = () => (
@@ -262,8 +265,8 @@ class KeyWordIdentify extends Component {
           )}
         </div>
         <div className="TableComponent">
-          {this.state.KwTotalLoadingState ? <KwHistoryTable dataSource={this.state.KwTotal} /> : null}
-          {this.state.jiebaLoadingState ? <JiebaTable dataSource={this.state.jiebaList} /> : null}
+          {this.state.KwTotalLoadingState ? KwHistoryTable(this.state.KwTotal) : null}
+          {this.state.jiebaLoadingState ? JiebaTable(this.state.jiebaList) : null}
         </div>
       </div>
     );

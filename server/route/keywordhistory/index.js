@@ -4,10 +4,9 @@ const db = require("../../db/DBConfig");
 
 router.get("/", (req, res) => {
   const sql = "SELECT * FROM test.Keyword";
-  db.fetchData((err, result) => {
-    if (err) throw err;
-    res.json(result);
-  }, sql);
+  db.Query(sql).then(rows => {
+    res.json(rows);
+  });
 });
 
 module.exports = router;

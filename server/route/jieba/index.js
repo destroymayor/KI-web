@@ -8,14 +8,12 @@ const db = require("../../db/DBConfig");
 router.get("/", (req, res) => {
   //文章參數
   let pages = req.query.page;
-
   const sql = "SELECT * FROM test.sourcetext";
-  db.fetchData((err, result) => {
-    if (err) throw err;
-    console.log(result[pages - 1]);
-
-    res.json(nodejieba.extract(result[pages - 1].content, 20));
-  }, sql);
+  db.Query(sql).then(rows => {
+    console.log(rows[pages - 1]);
+    res.json(nodejieba.extract(rows[pages - 1].content, 20));
+    // return db.Close();
+  });
 });
 
 module.exports = router;

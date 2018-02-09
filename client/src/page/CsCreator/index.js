@@ -202,51 +202,53 @@ class CsCreator extends Component {
     return (
       <div className="CsCreator-Index">
         <Menu renderPage="Expert" />
-        <div className="CsCreator-Item">
-          <div className="CsCreator-Add">
-            {this._renderCsInputItem()}
-            {this._renderPkwSelectItem()}
-            {this._renderCsLvSelectItem()}
+        <div className="CsCreator-IndexItem">
+          <div className="CsCreator-Item">
+            <div className="CsCreator-Add">
+              {this._renderCsInputItem()}
+              {this._renderPkwSelectItem()}
+              {this._renderCsLvSelectItem()}
+            </div>
+            <div className="CsCreator-ItemTableComponent">
+              <Table
+                className="CsCreator-TableComponent"
+                dataSource={this.state.CsCreator_TotalItem}
+                size={"small"}
+                rowSelection={rowSelection}
+                pagination={false}
+                rowKey={key => key.Cs}
+                footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>全部添加至DB</Button>}
+                columns={[
+                  {
+                    title: "Cs",
+                    dataIndex: "Cs",
+                    key: "Cs",
+                    width: 100
+                  },
+                  {
+                    title: "Kw",
+                    dataIndex: "Kw",
+                    key: "Kw",
+                    render: Kw => <span>{`${Kw}`}</span>
+                  },
+                  {
+                    title: "Lv",
+                    dataIndex: "Lv",
+                    key: "Lv"
+                  }
+                ]}
+              />
+            </div>
           </div>
-          <div className="CsCreator-ItemTableComponent">
-            <Table
-              className="CsCreator-TableComponent"
-              dataSource={this.state.CsCreator_TotalItem}
-              size={"small"}
-              rowSelection={rowSelection}
-              pagination={false}
-              rowKey={key => key.Cs}
-              footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>全部添加至DB</Button>}
-              columns={[
-                {
-                  title: "Cs",
-                  dataIndex: "Cs",
-                  key: "Cs",
-                  width: 100
-                },
-                {
-                  title: "Kw",
-                  dataIndex: "Kw",
-                  key: "Kw",
-                  render: Kw => <span>{`${Kw}`}</span>
-                },
-                {
-                  title: "Lv",
-                  dataIndex: "Lv",
-                  key: "Lv"
-                }
-              ]}
-            />
+          <div className="CsCreator-ArticlePreviewComponent">
+            {this.state.ArticlePreviewLoadingState ? (
+              <Collapse defaultActiveKey={["1"]}>
+                <Panel header="參看第一篇" key="1">
+                  <span dangerouslySetInnerHTML={{ __html: this.state.ArticlePreview }} />
+                </Panel>
+              </Collapse>
+            ) : null}
           </div>
-        </div>
-        <div className="CsCreator-ArticlePreviewComponent">
-          {this.state.ArticlePreviewLoadingState ? (
-            <Collapse defaultActiveKey={["1"]}>
-              <Panel header="參看第一篇" key="1">
-                <span dangerouslySetInnerHTML={{ __html: this.state.ArticlePreview }} />
-              </Panel>
-            </Collapse>
-          ) : null}
         </div>
       </div>
     );
