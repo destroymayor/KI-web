@@ -10,7 +10,7 @@ module.exports = io => {
 
     //接收client訊息並回傳
     socket.on("SendMessage", data => {
-      console.log("server msg", "使用者:", data.username, "內容:", data.content);
+      console.log("server msg", "ID: " + socket.id, "使用者:" + data.username, "內容: " + data.content);
       socket.emit("ReceiveMessage", { username: "ChatBot", content: "server回傳訊息 " });
     });
   });

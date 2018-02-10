@@ -16,7 +16,6 @@ exports.Query = sql => {
 
       connection.query(sql, (err, rows) => {
         if (err) return reject(err);
-
         resolve(rows);
         connection.release();
         console.log("\nConnection closed \n-----------------");
@@ -29,7 +28,6 @@ exports.Close = () => {
   return new Promise((resolve, reject) => {
     pool.end(err => {
       if (err) return reject(err);
-
       resolve();
     });
   });

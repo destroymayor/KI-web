@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
   let pages = req.query.page;
   const sql = "SELECT * FROM test.sourcetext";
   db.Query(sql).then(rows => {
-    console.log(rows[pages - 1]);
+    console.log("jieba output \n", nodejieba.extract(rows[pages - 1].content, 20));
     res.json(nodejieba.extract(rows[pages - 1].content, 20));
     // return db.Close();
   });
