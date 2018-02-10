@@ -91,17 +91,18 @@ class KeyWordIdentify extends Component {
       const responseData = await fetchKeywordHistory.json();
       responseData.forEach((value, index) => {
         KwHistoryArray.push(value.name);
-        this.setState({
-          //儲存kw歷史庫
-          KwHistory: KwHistoryArray,
-          //讀取歷史kw庫並標出顏色(綠色)
-          SourceText: this.state.SourceText.replace(
-            new RegExp(KwHistoryArray.join("|"), "g"),
-            val => `<span style="color:#00A600;">${val}</span>`
-          ),
-          //render keyword table view
-          KwTotalLoadingState: true
-        });
+      });
+
+      this.setState({
+        //儲存kw歷史庫
+        KwHistory: KwHistoryArray,
+        //讀取歷史kw庫並標出顏色(綠色)
+        SourceText: this.state.SourceText.replace(
+          new RegExp(KwHistoryArray.join("|"), "g"),
+          val => `<span style="color:#00A600;">${val}</span>`
+        ),
+        //render keyword table view
+        KwTotalLoadingState: true
       });
 
       //kw頻率及位置
@@ -139,14 +140,20 @@ class KeyWordIdentify extends Component {
     try {
       const fetchJiebaList = await fetch("/jieba?page=" + this.state.SourceTextSelectedOption);
       const responseData = await fetchJiebaList.json();
+
+      const JiebaListArray = [];
       responseData.forEach((value, index) => {
-        this.setState({
-          SourceText: this.state.SourceText.replace(
-            new RegExp(value.word, "g"),
-            val => `<span style="color:#2897ff;">${val}</span>`
-          )
-        });
+        JiebaListArray.push(value.word);
+        // 將資料push 至 table view
         this.state.jiebaList.push({ word: value.word, weight: value.weight.toFixed(2) });
+      });
+
+      //source tx 標記jieba顏色
+      this.setState({
+        SourceText: this.state.SourceText.replace(
+          new RegExp(JiebaListArray, "g"),
+          val => `<span style="color:#2897ff;">${val}</span>`
+        )
       });
 
       //render jieba table view
@@ -181,6 +188,8 @@ class KeyWordIdentify extends Component {
   //Ur人工標色
   GetSelectedText() {
     let Selection = window.getSelection().getRangeAt(0);
+
+    console.log(window.getSelection().toString());
     let SelectedText = Selection.extractContents();
     let SelectSpan = document.createElement("span");
     SelectSpan.style.backgroundColor = "#EA0000";

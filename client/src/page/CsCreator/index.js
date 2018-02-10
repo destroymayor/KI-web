@@ -83,6 +83,10 @@ class CsCreator extends Component {
     });
   };
 
+  _handleTableSelectRow = (selectedRowKeys, selectedRows) => {
+    console.log(selectedRowKeys, selectedRows);
+  }
+
   _renderCsInputItem = () => (
     <div className="CsCreator-AddItem">
       <Button
@@ -194,9 +198,7 @@ class CsCreator extends Component {
 
   render() {
     const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`);
-      }
+      onChange: this._handleTableSelectRow
     };
 
     return (

@@ -21,8 +21,7 @@
   font-size: large;
 }
 
-.Index-Content-Page {
-  flex: 3;
+.Index-Content {
   display: flex;
   justify-content: center;
 }

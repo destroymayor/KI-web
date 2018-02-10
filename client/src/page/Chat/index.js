@@ -19,7 +19,7 @@ class ChatRoom extends Component {
 
     // socketIO config
     this.socket = SocketIOClient(
-      process.env.NODE_ENV === "production" ? "https://kiweb.herokuapp.com/" : "http://localhost:3000/"
+      process.env.NODE_ENV === "production" ? "http://localhost:5000/" : "http://localhost:3000/"
     );
   }
 
@@ -60,12 +60,9 @@ class ChatRoom extends Component {
   //送出訊息
   submitMessage(e) {
     e.preventDefault();
-
     if (this.refs.message.value === "") return null;
-
     //socket.io傳送訊息
     this.socket.emit("SendMessage", { username: "User", content: this.refs.message.value });
-
     //將訊息合併至list
     this.setState(
       {
@@ -90,7 +87,7 @@ class ChatRoom extends Component {
           {this.state.chats.map((chat, index) => <HandleMessage key={index} chat={chat} user={"user"} />)}
         </ul>
         <form className="input" onSubmit={e => this.submitMessage(e)}>
-          <input placeholder={"輸入訊息..."} type="text" ref={"message"} />
+          <input placeholder={"輸入訊息..."} maxLength="50" type="text" ref={"message"} />
           <input type="submit" value={"送出"} />
         </form>
       </div>
