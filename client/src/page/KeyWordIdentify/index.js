@@ -128,8 +128,9 @@ class KeyWordIdentify extends Component {
         FetchKeyWordHistoryLoadingState: false
       });
     } catch (error) {
-      console.log("fetch keyword history error", error);
+      this.setState({ FetchKeyWordHistoryLoadingState: false });
       message.error("無法連接，請稍後再試!");
+      console.log("fetch keyword history error", error);
     }
   }
 
@@ -144,6 +145,7 @@ class KeyWordIdentify extends Component {
       const JiebaListArray = [];
       responseData.forEach((value, index) => {
         JiebaListArray.push(value.word);
+
         // 將資料push 至 table view
         this.state.jiebaList.push({ word: value.word, weight: value.weight.toFixed(2) });
       });
@@ -151,7 +153,7 @@ class KeyWordIdentify extends Component {
       //source tx 標記jieba顏色
       this.setState({
         SourceText: this.state.SourceText.replace(
-          new RegExp(JiebaListArray, "g"),
+          new RegExp(JiebaListArray.join("|"), "g"),
           val => `<span style="color:#2897ff;">${val}</span>`
         )
       });
@@ -159,8 +161,9 @@ class KeyWordIdentify extends Component {
       //render jieba table view
       this.setState({ jiebaLoadingState: true, FetchjiebaListLoadingState: false });
     } catch (error) {
-      console.log("fetch jieba error", error);
+      this.setState({ FetchjiebaListLoadingState: false });
       message.error("無法連接，請稍後再試!");
+      console.log("fetch jieba error", error);
     }
   }
 
@@ -249,12 +252,11 @@ class KeyWordIdentify extends Component {
     return (
       <div className="Ki">
         <Menu renderPage="Expert" />
-
         <div className="SelectComponent">
-          <p>選擇文章</p>
+          <div>選擇文章</div>
           <Select
             className="KI_selectComponent"
-            style={{ width: "20%" }}
+            style={{ width: 100 }}
             labelInValue
             placeholder={this.state.SourceTextSelectedOption}
             onChange={this.HandleSelect}

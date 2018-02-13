@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./index.css";
 
 import Menu from "../../utils/Menu/index";
-import { Button, Collapse, Icon, Input, Select, Popover, Table } from "antd";
+import { Button, Collapse, Icon, Input, Select, message, Spin, Popover, Table } from "antd";
 // Select component option
 const Option = Select.Option;
 // Panel component option
@@ -10,6 +10,8 @@ const Panel = Collapse.Panel;
 
 class CsCreator extends Component {
   state = {
+    SourceTextSelectItem: [],
+    SourceTextSelectedPlaceholder: "",
     //切換Cs選擇模式
     CsSwitchMode: true,
     //Cs select多選 list
@@ -29,51 +31,100 @@ class CsCreator extends Component {
     //table添加至db的button state
     Cs_KwListToDataBaseBtnState: true,
     // 選擇pkw時參看原文章
-    ArticlePreview:
-      "中央社記者韋樞台北2018年1月25日電）股市追漲不追跌的特性同樣適用於房市，房仲發現，新北重劃區降價換成交如同吸嗎啡，初期奏效，但降價策略不停止，在投資人不追跌的情形下買氣必停，土城暫緩發展區要提高警覺。 在房市一片讓利風下，降價才有來客數，有來客數才有機會成交，似乎讓利成了房市成交的唯一藥方，於是新屋餘屋多的重劃區多用降價換成交策略。 中信房屋副總劉天仁表示，股市的特性就是追漲不追跌，房市降價換成交的銷售策略如同雙面刃，更像嗎啡。初期銷售必然亮眼，但若降價策略不適可而止，同業勢必打價格戰，更將造成消費者觀望氣氛，買氣反而會驟然停滯，市場陷入觀望。 劉天仁發現，新北市板橋江翠北側重劃區及土城暫緩發展重劃區為新北市兩大熱門重劃區，部份建案銷售情況不錯，但往往只有降價取量，也就是區域內第一個降價案奏效後，其他建案勢必跟進，否則無法銷售，若開出比第一案更低價，市場就會陷入無底的價格戰，長期的價格戰無異於嗎啡，購屋人麻痺了，市場自然陷入觀望停滯。 劉天仁提醒，這兩個重劃區的推案潮應會從現在起延續到第3季以後，若建商或代銷業者的銷售策略不改變，預料土城暫緩發展重劃區空殺空的情況會在第2季前就會發生，屆時將發生買氣停滯的情況。 至於板橋江翠北側重劃區從2016年7月起經歷一年多的空殺空洗禮，目前此區預售屋價格甚至演變成不同區位，但卻是均一價的情況，所幸價格不再競跌，近期買氣才稍有回升。",
+    ArticlePreviewList: [],
+    ArticlePreview: "",
     ArticlePreviewLoadingState: false
   };
 
   componentDidMount() {
-    this.Fetch_JiebaList();
+    this._FetchSourceText();
   }
 
-  async Fetch_JiebaList() {
+  //讀取sourceText庫資料
+  async _FetchSourceText() {
+    try {
+      const fetchSourceText = await fetch("/sourcetext");
+      const responseData = await fetchSourceText.json();
+      //select option
+      responseData.forEach((value, index) => {
+        this.state.SourceTextSelectItem.push(
+          <Option key={index} value={index + 1}>
+            {value.content}
+          </Option>
+        );
+
+        //參看原文章list
+        this.state.ArticlePreviewList.push(value.content);
+      });
+    } catch (error) {
+      console.log("fetch source text error", error);
+      message.error("無法連接，請稍後再試!");
+    }
+  }
+
+  async _Fetch_JiebaList(pageNumber) {
     const pKwSelectLists = [];
     try {
-      const fetchData = await fetch("/jieba?page=1");
+      const fetchData = await fetch("/jieba?page=" + pageNumber);
       const responseData = await fetchData.json();
       //多選component
       responseData.forEach((value, index) => {
-        pKwSelectLists.push(<Option key={value.word}>{value.word}</Option>);
+        pKwSelectLists.push(
+          <Option
+            onMouseEnter={value => {
+              //參看原文章
+              this.setState({
+                ArticlePreview: this.state.ArticlePreview.replace(
+                  new RegExp(value.key, "g"),
+                  `<span style="background:#2897ff;">${value.key}</span>`
+                ),
+                ArticlePreviewLoadingState: true
+              });
+            }}
+            onMouseLeave={value => {
+              //標記顏色復原
+              this.setState({
+                ArticlePreview: this.state.ArticlePreview.replace(/<\s*\w*\s*style.*?>/g, "")
+              });
+            }}
+            key={value.word}
+          >
+            {value.word}
+          </Option>
+        );
 
-        this.state.CsAdd_SelectList.push(<Option key={parseInt(index + 1, 10)}>{`Cs${index + 1}`}</Option>);
+        this.state.CsAdd_SelectList.push(<Option key={parseInt(index + 1, 10)}>{value.word}</Option>);
 
         this.setState({
           CsAdd_CustomizeSelectComponent: pKwSelectLists
         });
       });
-    } catch (error) {}
+
+      //參看原文章篇數
+      this.setState({
+        ArticlePreview: this.state.ArticlePreviewList[pageNumber - 1]
+      });
+    } catch (error) {
+      console.log("Fetch_JiebaList error", error);
+      message.error("無法連接，請稍後再試!");
+    }
   }
 
-  // handle參看原文章
-  handlePkwSelect = value => {
-    //參看原文章
+  //handle select source tx
+  handleSelectSourceText = selectValue => {
     this.setState({
-      ArticlePreview: this.state.ArticlePreview.replace(
-        new RegExp(value, "g"),
-        val => `<span style="background:#2897ff;">${val}</span>`
-      ),
-      ArticlePreviewLoadingState: true
+      CsAdd_SelectList: [],
+      SelectPkwList: [],
+      SelectCsList: ""
     });
+    this._Fetch_JiebaList(selectValue.key);
   };
 
   //total 選擇handle
   handleAddCs_Kw = () => {
     this.state.CsCreator_TotalItem.push({
       Cs: this.state.SelectCsList,
-      Kw: this.state.SelectPkwList,
-      Lv: this.state.SelectCsLv
+      Kw: this.state.SelectPkwList
     });
     this.setState({
       ArticlePreview: this.state.ArticlePreview.replace(/<[^>]*>/g, ""),
@@ -83,9 +134,41 @@ class CsCreator extends Component {
     });
   };
 
-  _handleTableSelectRow = (selectedRowKeys, selectedRows) => {
-    console.log(selectedRowKeys, selectedRows);
-  }
+  _renderSelectSourceText = () => (
+    <div className="CsCreator-AddItem">
+      <div>選擇文章</div>
+      <Select
+        className="CsCreator_SelectComponent"
+        style={{ width: 300, marginLeft: 10 }}
+        labelInValue
+        notFoundContent={<Spin size="small" />}
+        placeholder={this.state.SourceTextSelectedPlaceholder}
+        onChange={this.handleSelectSourceText}
+      >
+        {this.state.SourceTextSelectItem}
+      </Select>
+    </div>
+  );
+
+  _renderPkwSelectItem = () => (
+    <div className="CsCreator-AddItem">
+      <div>pKw</div>
+      <Select
+        style={{ width: "87%", marginLeft: 10 }}
+        className="CsCreator-pKwSelectComponent"
+        allowClear={true}
+        mode="tags"
+        notFoundContent={<Spin size="small" />}
+        onChange={value => {
+          // pkw select list
+          this.setState({ SelectPkwList: value });
+        }}
+        onDeselect={value => {}}
+      >
+        {this.state.CsAdd_CustomizeSelectComponent}
+      </Select>
+    </div>
+  );
 
   _renderCsInputItem = () => (
     <div className="CsCreator-AddItem">
@@ -100,16 +183,21 @@ class CsCreator extends Component {
           });
         }}
       >
-        {this.state.CsSwitchMode ? "選擇Cs" : "自定義Cs"}
+        {!this.state.CsSwitchMode ? "選擇Cs" : "自定義Cs"}
       </Button>
-      {this.state.CsSwitchMode ? (
+      {!this.state.CsSwitchMode ? (
         <Select
-          style={{ width: "100%" }}
+          style={{ width: "100%", marginLeft: 10 }}
           className="CsCreator-SelectComponent"
           labelInValue
+          notFoundContent={<Spin size="small" />}
           onChange={value => {
             //選擇Cs
-            this.setState({ SelectCsList: value.label, ArticlePreviewLoadingState: false });
+            this.setState({
+              SelectCsList: value.label,
+              ArticlePreviewLoadingState: false,
+              AddCs_KwState: false
+            });
           }}
         >
           {this.state.CsAdd_SelectList}
@@ -130,122 +218,98 @@ class CsCreator extends Component {
     </div>
   );
 
-  _renderPkwSelectItem = () => (
-    <div className="CsCreator-AddItem">
-      <div>pKw</div>
-      <Select
-        style={{ width: "87%", marginLeft: 10 }}
-        className="CsCreator-pKwSelectComponent"
-        allowClear={true}
-        mode="tags"
-        onChange={value => {
-          // pkw select list
-          this.setState({ SelectPkwList: value, AddCs_KwState: false });
-        }}
-        onDeselect={value => {
-          //標記顏色復原
-          this.setState({
-            ArticlePreview: this.state.ArticlePreview.replace(
-              new RegExp(`<span[^>]*>[${value}]+</span>`, "g"),
-              value
+  _renderTotalTable = () => {
+    const rowSelection = {
+      onChange: (selectedRowKeys, selectedRows) => {
+        console.log(selectedRowKeys, selectedRows);
+      }
+    };
+    return (
+      <Table
+        className="CsCreator-TableComponent"
+        dataSource={this.state.CsCreator_TotalItem}
+        size={"small"}
+        rowSelection={rowSelection}
+        pagination={false}
+        rowKey={key => key.Cs}
+        footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>全部添加至DB</Button>}
+        columns={[
+          {
+            title: (
+              <Popover
+                placement={"bottom"}
+                title={"說明"}
+                content={
+                  <div>
+                    <p>sX → 不是Kw</p>
+                    <p>sI → 口語Kw</p>
+                    <p>iW → 通用Kw</p>
+                    <p>tS → 特定Kw</p>
+                  </div>
+                }
+              >
+                Cs-Lv <Icon type="question-circle" />
+              </Popover>
+            ),
+            dataIndex: "Lv",
+            key: "Lv",
+            render: (text, record, index) => (
+              <Select
+                style={{ width: 70 }}
+                className="CsCreator-SelectComponent"
+                labelInValue
+                onChange={text => {
+                  //合併object to Lv
+                  Object.assign(this.state.CsCreator_TotalItem[index], { Lv: text.key });
+                }}
+              >
+                <Option key={"sX"}>{"sX"}</Option>
+                <Option key={"sI"}>{"sI"}</Option>
+                <Option key={"iW"}>{"iW"}</Option>
+                <Option key={"tS"}>{"tS"}</Option>
+              </Select>
             )
-          });
-        }}
-        onSelect={this.handlePkwSelect}
-      >
-        {this.state.CsAdd_CustomizeSelectComponent}
-      </Select>
-    </div>
-  );
-
-  _renderCsLvSelectItem = () => (
-    <div className="CsCreator-AddItem">
-      <div style={{ width: "20%" }}>
-        <Popover
-          placement={"bottom"}
-          title={"說明"}
-          content={
-            <div>
-              <p>sX → 不是Kw</p>
-              <p>sI → 口語Kw</p>
-              <p>iW → 通用Kw</p>
-              <p>tS → 特定Kw</p>
-            </div>
+          },
+          {
+            title: "Cs",
+            dataIndex: "Cs",
+            key: "Cs"
+          },
+          {
+            title: "Kw",
+            dataIndex: "Kw",
+            key: "Kw",
+            render: Kw => <span>{`${Kw}`}</span>
           }
-        >
-          Cs-Lv{"  "}
-          <Icon type="question-circle" />
-        </Popover>
-      </div>
-      <Select
-        style={{ width: "80%" }}
-        className="CsCreator-SelectComponent"
-        labelInValue
-        onChange={value => {
-          this.setState({ SelectCsLv: value.label });
-        }}
-      >
-        <Option key={"sX"}>{"sX"}</Option>
-        <Option key={"sI"}>{"sI"}</Option>
-        <Option key={"iW"}>{"iW"}</Option>
-        <Option key={"tS"}>{"tS"}</Option>
-      </Select>
-      <Button disabled={this.state.AddCs_KwState} className="CsCreator-AddBtn" onClick={this.handleAddCs_Kw}>
-        添加
-      </Button>
-    </div>
-  );
+        ]}
+      />
+    );
+  };
 
   render() {
-    const rowSelection = {
-      onChange: this._handleTableSelectRow
-    };
-
     return (
       <div className="CsCreator-Index">
         <Menu renderPage="Expert" />
         <div className="CsCreator-IndexItem">
           <div className="CsCreator-Item">
             <div className="CsCreator-Add">
-              {this._renderCsInputItem()}
+              {this._renderSelectSourceText()}
               {this._renderPkwSelectItem()}
-              {this._renderCsLvSelectItem()}
+              {this._renderCsInputItem()}
+              <Button
+                disabled={this.state.AddCs_KwState}
+                className="CsCreator-AddBtn"
+                onClick={this.handleAddCs_Kw}
+              >
+                添加
+              </Button>
             </div>
-            <div className="CsCreator-ItemTableComponent">
-              <Table
-                className="CsCreator-TableComponent"
-                dataSource={this.state.CsCreator_TotalItem}
-                size={"small"}
-                rowSelection={rowSelection}
-                pagination={false}
-                rowKey={key => key.Cs}
-                footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>全部添加至DB</Button>}
-                columns={[
-                  {
-                    title: "Cs",
-                    dataIndex: "Cs",
-                    key: "Cs",
-                    width: 100
-                  },
-                  {
-                    title: "Kw",
-                    dataIndex: "Kw",
-                    key: "Kw",
-                    render: Kw => <span>{`${Kw}`}</span>
-                  },
-                  {
-                    title: "Lv",
-                    dataIndex: "Lv",
-                    key: "Lv"
-                  }
-                ]}
-              />
-            </div>
+            <div className="CsCreator-ItemTableComponent">{this._renderTotalTable()}</div>
           </div>
           <div className="CsCreator-ArticlePreviewComponent">
             {this.state.ArticlePreviewLoadingState ? (
               <Collapse defaultActiveKey={["1"]}>
-                <Panel header="參看第一篇" key="1">
+                <Panel header="參看原文章" key="1">
                   <span dangerouslySetInnerHTML={{ __html: this.state.ArticlePreview }} />
                 </Panel>
               </Collapse>
