@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node index.js",
     "client": "cd client && yarn start",
-    "build": "cd client && yarn build",
+    "build": "cd client && yarn build && yarn postbuild",
     "heroku-postbuild": "cd client && yarn --production=false && yarn build",
     "deploy": "git add . && git ci -m 'ci' && git push heroku master",
     "push": "git add . && git ci -m 'ci' && git push -u origin master"

@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
-    "antd": "^3.2.0",
+    "antd": "^3.2.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
@@ -15,6 +15,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postbuild": "rimraf build/**/*.map"
   }
 }
