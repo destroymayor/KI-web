@@ -1,12 +1,20 @@
-import React, { Component } from "react";
+import React from 'react';
 
-import Button from "antd/lib/button";
+import Button from 'antd/lib/button';
 
-class Buttons extends Component {
+class Buttons extends React.PureComponent {
   render() {
-    const { Text, Type, onClick, loading, disabled } = this.props;
+    const {
+      Text, Type, onClick, loading, disabled,
+    } = this.props;
     return (
-      <Button className="KI_touch" loading={loading} disabled={disabled} type={Type} onClick={onClick}>
+      <Button
+        className="KI_touch"
+        loading={loading}
+        disabled={disabled}
+        type={Type}
+        onClick={onClick}
+      >
         {Text}
       </Button>
     );

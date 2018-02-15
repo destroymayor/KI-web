@@ -6,7 +6,8 @@ const pool = mysql.createPool({
   user: "root",
   password: "mismb207",
   database: "china_sea",
-  port: 3306
+  port: 3306,
+  connectionLimit: 30
 });
 
 exports.Query = sql => {

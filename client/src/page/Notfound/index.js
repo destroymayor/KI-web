@@ -1,11 +1,12 @@
-import React, { Component } from "react";
-import "./index.css";
+import React from 'react';
+import './index.css';
 
-class Notfound extends Component {
+class Notfound extends React.PureComponent {
   render() {
+    const { NotfoundText } = this.props;
     return (
       <div className="Notfound">
-        <h1>您訪問的頁面不存在</h1>
+        <h1>{NotfoundText}</h1>
       </div>
     );
   }
