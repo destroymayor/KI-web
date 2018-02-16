@@ -1,38 +1,37 @@
-const mysql = require("mysql");
+const mysql = require('mysql');
 
-//連線池
+// 連線池
 const pool = mysql.createPool({
-  host: "140.125.84.189",
-  user: "root",
-  password: "mismb207",
-  database: "china_sea",
+  host: '140.125.84.189',
+  user: 'root',
+  password: 'mismb207',
+  database: 'china_sea',
   port: 3306,
-  connectionLimit: 30
+  connectionLimit: 30,
 });
 
-exports.Query = sql => {
-  return new Promise((resolve, reject) => {
+exports.Query = sql =>
+  new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
       if (err) return reject(err);
 
-      connection.query(sql, (err, rows) => {
-        if (err) return reject(err);
+      return connection.query(sql, (error, rows) => {
+        if (error) return reject(error);
         resolve(rows);
         connection.release();
-        console.log("\nConnection closed \n-----------------");
+
+        console.log('\nConnection closed \n-----------------');
       });
     });
   });
-};
 
-exports.Close = () => {
-  return new Promise((resolve, reject) => {
-    pool.end(err => {
+exports.Close = () =>
+  new Promise((resolve, reject) => {
+    pool.end((err) => {
       if (err) return reject(err);
-      resolve();
+      return resolve();
     });
   });
-};
 
 /*
 example

@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import './index.css';
+import React, { Component } from "react";
+import "./index.css";
 
 //載入react router組件庫
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 //載入ant design 組件庫
-import { Menu, Icon } from 'antd';
+import { Menu, Icon } from "antd";
 
 class Menus extends Component {
   _renderLoginPage = () => (
@@ -45,12 +45,12 @@ class Menus extends Component {
     const { renderPage } = this.props;
     return (
       <div className="Menu">
-        <Menu style={{ width: '100%' }} mode="horizontal">
-          {renderPage === 'User'
+        <Menu style={{ width: "100%" }} mode="horizontal">
+          {renderPage === "User"
             ? this._renderUserPage()
-            : renderPage === 'Trainer'
+            : renderPage === "Trainer"
               ? this._renderTrainerPage()
-              : renderPage === 'Expert' ? this._renderExpert() : this._renderLoginPage()}
+              : renderPage === "Expert" ? this._renderExpert() : this._renderLoginPage()}
         </Menu>
       </div>
     );

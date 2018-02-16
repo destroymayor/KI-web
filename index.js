@@ -17,7 +17,7 @@ routes(app);
 
 // 其他頁面導向index
 app.get('*', (req, res) => {
-  res.sendFile(path.join(`${__dirname}/client/build/index.html`));
+  res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
 // socket.io config

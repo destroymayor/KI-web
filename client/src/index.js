@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 // import { unregister as unregisterServiceWorker } from './registerServiceWorker';
-import registerServiceWorker from './registerServiceWorker';
-import './index.css';
+import registerServiceWorker from "./registerServiceWorker";
+import "./index.css";
 
-import App from './page/index';
+import App from "./page/index";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));
 
 registerServiceWorker();
 // unregisterServiceWorker();
