@@ -1,5 +1,9 @@
+const sourcetext = require('./sourceText/index');
+const keywordhistory = require('./keywordhistory/index');
+const jieba = require('./jieba/index');
+
 module.exports = (app) => {
-  app.use('/sourcetext', require('./sourceText/index'));
-  app.use('/keywordhistory', require('./keywordhistory/index'));
-  app.use('/jieba', require('./jieba/index'));
+  [sourcetext, keywordhistory, jieba].forEach((router) => {
+    router(app);
+  });
 };

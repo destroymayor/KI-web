@@ -84,7 +84,7 @@ class ChatRoom extends Component {
       <div className="ChatRoom">
         <h4>聊天室</h4>
         <ul className="chats" ref="chats">
-          {this.state.chats.map((chat, index) => <HandleMessage key={chat} chat={chat} user="user" />)}
+          {this.state.chats.map((chat, index) => <HandleMessage key={index} chat={chat} user="user" />)}
         </ul>
         <form className="input" onSubmit={e => this.submitMessage(e)}>
           <input placeholder="輸入訊息..." maxLength="50" type="text" ref="message" />
