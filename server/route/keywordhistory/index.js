@@ -2,9 +2,7 @@ import { Query } from '../../db/config';
 
 export default (app) => {
   app.get('/keywordhistory', (req, res) => {
-    const sql = 'SELECT * FROM test.Keyword';
-
-    Query(sql)
+    Query('SELECT * FROM test.Keyword')
       .then((rows) => {
         console.log('keyword history output \n', rows);
         res.json(rows);

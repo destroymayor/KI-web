@@ -1,15 +1,17 @@
 import compression from 'compression';
+
 import express from 'express';
 import helmet from 'helmet';
 import path from 'path';
 
-import router from './server/route/index';
-import ChatRoom from './server/socketIO/chat';
+import ChatRoom from './socketIO/chat';
+
+import router from './route/index';
 
 const app = express();
 app.use(compression());
 app.use(helmet());
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 // 載入router config
 router(app);
@@ -23,7 +25,7 @@ ChatRoom(SocketIO);
 
 // 其他頁面導向index
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build/index.html'));
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
 server.listen(process.env.PORT || 5000);

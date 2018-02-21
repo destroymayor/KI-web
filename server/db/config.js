@@ -20,7 +20,7 @@ const Query = sql =>
         resolve(rows);
         connection.release();
 
-        console.log(`\nConnection closed - ${new Date().toLocaleString()} \n-----------------`);
+        return console.log(` \nConnection closed => ${new Date().toLocaleString()} \n `);
       });
     });
   });
