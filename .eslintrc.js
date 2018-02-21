@@ -12,6 +12,7 @@ module.exports = {
     'no-inner-declarations': [2, 'functions'],
     'no-unused-vars': 'warn',
     'no-unexpected-multiline': 'warn',
+    'no-console': 'off',
   },
   env: {
     browser: true,

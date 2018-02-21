@@ -1,11 +1,10 @@
-const db = require('../../db/config');
+import { Query } from '../../db/config';
 
-module.exports = (app) => {
+export default (app) => {
   app.get('/keywordhistory', (req, res) => {
     const sql = 'SELECT * FROM test.Keyword';
 
-    db
-      .Query(sql)
+    Query(sql)
       .then((rows) => {
         console.log('keyword history output \n', rows);
         res.json(rows);

@@ -8,17 +8,18 @@
     "yarn": "1.3.2"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon --watch src --exec babel-watch index.js",
+    "watch": "babel-watch index.js",
     "client": "cd client && yarn start",
-    "build": "cd client && yarn build && yarn postbuild",
-    "heroku-postbuild": "cd client && yarn --production=false && yarn build",
-    "deploy": "git add . && git ci -m 'ci' && git push heroku master",
-    "push": "git add . && git ci -m 'ci' && git push -u origin master"
+    "build": "babel src --out-dir lib",
+    "pm2-start":
+      "pm2 start index.js --interpreter ./node_modules/.bin/babel-node --name kiweb --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "compression": "^1.7.1",
     "express": "^4.16.2",
     "helmet": "^3.11.0",
@@ -27,8 +28,17 @@
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-es2015-parameters": "^6.24.1",
+    "babel-plugin-transform-es2015-spread": "^6.22.0",
+    "babel-plugin-transform-strict-mode": "^6.24.1",
+    "babel-watch": "^2.0.7",
     "eslint": "^4.17.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "nodemon": "^1.15.1"
   }
 }

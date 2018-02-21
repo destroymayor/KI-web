@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+import mysql from 'mysql';
 
 // 連線池
 const pool = mysql.createPool({
@@ -10,7 +10,7 @@ const pool = mysql.createPool({
   connectionLimit: 30,
 });
 
-exports.Query = sql =>
+const Query = sql =>
   new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
       if (err) return reject(err);
@@ -20,18 +20,20 @@ exports.Query = sql =>
         resolve(rows);
         connection.release();
 
-        console.log('\nConnection closed \n-----------------');
+        console.log(`\nConnection closed - ${new Date().toLocaleString()} \n-----------------`);
       });
     });
   });
 
-exports.Close = () =>
+const Close = () =>
   new Promise((resolve, reject) => {
     pool.end((err) => {
       if (err) return reject(err);
       return resolve();
     });
   });
+
+export { Query, Close };
 
 /*
 example

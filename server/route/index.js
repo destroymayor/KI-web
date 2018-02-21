@@ -1,9 +1,9 @@
-const sourcetext = require('./sourceText/index');
-const keywordhistory = require('./keywordhistory/index');
-const jieba = require('./jieba/index');
+import SourceText from './sourceText/index';
+import KeywordHistory from './keywordhistory/index';
+import jieba from './jieba/index';
 
-module.exports = (app) => {
-  [sourcetext, keywordhistory, jieba].forEach((router) => {
+export default (app) => {
+  [SourceText, KeywordHistory, jieba].forEach((router) => {
     router(app);
   });
 };

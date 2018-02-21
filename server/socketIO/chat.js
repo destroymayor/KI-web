@@ -1,4 +1,4 @@
-module.exports = io => {
+export default io => {
   // socket.io connection
   io.sockets.on('connection', socket => {
     // 離線
