@@ -1,9 +1,10 @@
-import React, { Component } from "react";
-import "./index.css";
-
 // 載入 router library
 import { Router, Route } from "react-router-dom";
 import Switch from "react-router-dom/Switch";
+
+import React, { Component } from "react";
+import "./index.css";
+
 import history from "./RouterHistory";
 
 // 載入 Login

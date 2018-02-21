@@ -1,8 +1,7 @@
+import { Icon, message, Select } from "antd";
+
 import React, { Component } from "react";
 import "./index.css";
-
-// 載入ant design 組件庫
-import { Icon, message, Select } from "antd";
 
 import Menu from "../../utils/Menu/index";
 import Buttons from "../../utils/components/Buttons";
@@ -92,7 +91,7 @@ class KeyWordIdentify extends Component {
     try {
       const fetchKeywordHistory = await fetch("/keywordhistory");
       const responseData = await fetchKeywordHistory.json();
-      responseData.forEach((value, index) => {
+      responseData.forEach(value => {
         KwHistoryArray.push(value.name);
       });
 
@@ -146,7 +145,7 @@ class KeyWordIdentify extends Component {
       const responseData = await fetchJiebaList.json();
 
       const JiebaListArray = [];
-      responseData.forEach((value, index) => {
+      responseData.forEach(value => {
         JiebaListArray.push(value.word);
 
         // 將資料push 至 table view
@@ -259,7 +258,7 @@ class KeyWordIdentify extends Component {
           <div>選擇文章</div>
           <Select
             className="KI_selectComponent"
-            style={{ width: 100 }}
+            style={{ width: 300 }}
             labelInValue
             placeholder={this.state.SourceTextSelectedOption}
             onChange={this.HandleSelect}

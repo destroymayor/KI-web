@@ -1,8 +1,9 @@
+import { Button, Collapse, Icon, Input, Select, message, Spin, Popover, Popconfirm, Table } from "antd";
+
 import React, { Component } from "react";
 import "./index.css";
 
 import Menu from "../../utils/Menu/index";
-import { Button, Collapse, Icon, Input, Select, message, Spin, Popover, Popconfirm, Table } from "antd";
 // Select component option
 const Option = Select.Option;
 // Panel component option

@@ -1,8 +1,8 @@
+import { Button, Form, Input, Icon, Select } from "antd";
+
 import React, { Component } from "react";
 import "./index.css";
 import history from "../RouterHistory";
-
-import { Button, Form, Input, Icon, Select } from "antd";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
