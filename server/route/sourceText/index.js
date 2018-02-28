@@ -5,10 +5,10 @@ export default (app) => {
     Query('SELECT * FROM test.sourcetext')
       .then((rows) => {
         res.json(rows);
-        // return db.Close();
       })
       .catch((error) => {
         res.json({ error });
+        console.log('source text error', error);
       });
   });
 };

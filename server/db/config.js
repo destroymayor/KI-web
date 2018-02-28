@@ -1,11 +1,10 @@
 import mysql from 'mysql';
 
-// 連線池
 const pool = mysql.createPool({
   host: '140.125.84.189',
   user: 'root',
   password: 'mismb207',
-  database: 'china_sea',
+  database: 'chain_sea',
   port: 3306,
   connectionLimit: 30,
 });
