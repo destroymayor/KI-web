@@ -23,10 +23,19 @@
 }
 
 #SourceTextItem {
-  background: rgb(240, 240, 240);
-  padding: 10px;
-  border-radius: 20px;
   margin-left: 20px;
+  margin-right: 20px;
+  width: 70%;
+}
+
+#SourceTextContent {
+  background: rgb(240, 240, 240);
+  border-radius: 20px;
+  padding: 15px;
+}
+
+#ManualTag-List {
+  width: 30%;
   margin-right: 20px;
 }
 

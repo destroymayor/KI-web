@@ -1,4 +1,5 @@
-import { Icon, message, Select } from "antd";
+import axios from "axios";
+import { Icon, List, message, Select } from "antd";
 
 import React, { Component } from "react";
 import "./index.css";
@@ -32,7 +33,7 @@ class KeyWordIdentify extends Component {
       FetchjiebaListDisabledState: true,
       FetchjiebaListLoadingState: false,
       // 復原Ur標註
-      UrTagRecovery: "",
+      UrTagRecovery: [],
       // 人工標記集合
       GetSelectedTextList: [],
       // kw參數的List
@@ -49,38 +50,38 @@ class KeyWordIdentify extends Component {
   }
 
   // 讀取sourceText庫資料
-  async FetchSourceText() {
-    try {
-      const fetchSourceText = await fetch("/sourcetext");
-      const responseData = await fetchSourceText.json();
-      // select option
-      responseData.forEach((value, index) => {
-        this.state.SourceTextSelectItem.push(
-          <Option key={index} value={value.content}>
-            {index + 1}
-          </Option>
-        );
-      });
+  FetchSourceText() {
+    axios
+      .get("/sourcetext")
+      .then(response => {
+        response.data.forEach((value, index) => {
+          this.state.SourceTextSelectItem.push(
+            <Option key={index} value={value.content}>
+              {index + 1}
+            </Option>
+          );
+        });
 
-      this.setState({
-        // loading state
-        SourceTextLoadingState: true,
-        // open 讀取歷史kw庫按鈕
-        FetchKeyWordHistoryDisabledState: false,
-        // open jieba 按鈕狀態
-        FetchjiebaListDisabledState: false,
-        SourceText: responseData[0].content,
-        // 標出tx庫位置的集合
-        SourceTextLocalTags: responseData[0].content
+        this.setState({
+          // loading state
+          SourceTextLoadingState: true,
+          // open 讀取歷史kw庫按鈕
+          FetchKeyWordHistoryDisabledState: false,
+          // open jieba 按鈕狀態
+          FetchjiebaListDisabledState: false,
+          SourceText: response.data[0].content,
+          // 標出tx庫位置的集合
+          SourceTextLocalTags: response.data[0].content
+        });
+      })
+      .catch(error => {
+        console.log("fetch source text", error);
+        message.error("無法連接，請稍後再試!");
       });
-    } catch (error) {
-      console.log("fetch source text error", error);
-      message.error("無法連接，請稍後再試!");
-    }
   }
 
   // 讀取歷史kw庫資料
-  async FetchKeyWordHistory() {
+  FetchKeyWordHistory() {
     this.setState({
       // loading 讀取歷史kw庫按鈕
       FetchKeyWordHistoryLoadingState: true,
@@ -88,85 +89,87 @@ class KeyWordIdentify extends Component {
       FetchKeyWordHistoryDisabledState: true
     });
     const KwHistoryArray = [];
-    try {
-      const fetchKeywordHistory = await fetch("/keywordhistory");
-      const responseData = await fetchKeywordHistory.json();
-      responseData.forEach(value => {
-        KwHistoryArray.push(value.name);
-      });
-
-      this.setState({
-        // 儲存kw歷史庫
-        KwHistory: KwHistoryArray,
-        // 讀取歷史kw庫並標出顏色(綠色)
-        SourceText: this.state.SourceText.replace(
-          new RegExp(KwHistoryArray.join("|"), "g"),
-          val => `<span style="color:#00A600;">${val}</span>`
-        ),
-        // render keyword table view
-        KwTotalLoadingState: true
-      });
-
-      // kw頻率及位置
-      this.state.KwHistory.forEach((value, index) => {
-        const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
-        this.state.KwTotal.push({
-          index: index,
-          // kw
-          keyword: frequencyState ? null : value,
-          // 出現頻率
-          frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
-          // 出現位置字元
-          localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+    axios
+      .get("/keywordhistory")
+      .then(response => {
+        response.data.forEach(value => {
+          KwHistoryArray.push(value.name);
         });
-      });
 
-      // 過濾null值
-      this.setState({
-        KwTotal: this.state.KwTotal.filter(value => {
-          return value.keyword !== null;
-        }),
-        // loading 讀取歷史kw庫按鈕
-        FetchKeyWordHistoryLoadingState: false
+        this.setState({
+          // 儲存kw歷史庫
+          KwHistory: KwHistoryArray,
+          // 讀取歷史kw庫並標出顏色(綠色)
+          SourceText: this.state.SourceText.replace(
+            new RegExp(KwHistoryArray.join("|"), "g"),
+            val => `<em style="color:#00A600;">${val}</em>`
+          ),
+          // render keyword table view
+          KwTotalLoadingState: true
+        });
+
+        // kw頻率及位置
+        this.state.KwHistory.forEach((value, index) => {
+          const frequencyState = this.state.SourceText.match(new RegExp(value, "g") || []) === null;
+          this.state.KwTotal.push({
+            index: index,
+            // kw
+            keyword: frequencyState ? null : value,
+            // 出現頻率
+            frequency: frequencyState
+              ? null
+              : this.state.SourceText.match(new RegExp(value, "g") || []).length,
+            // 出現位置字元
+            localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
+          });
+        });
+
+        // 過濾null值
+        this.setState({
+          KwTotal: this.state.KwTotal.filter(value => {
+            return value.keyword !== null;
+          }),
+          // loading 讀取歷史kw庫按鈕
+          FetchKeyWordHistoryLoadingState: false
+        });
+      })
+      .catch(error => {
+        console.log("fetch keyword history error", error);
+        this.setState({ FetchKeyWordHistoryLoadingState: false });
+        message.error("無法連接，請稍後再試!");
       });
-    } catch (error) {
-      this.setState({ FetchKeyWordHistoryLoadingState: false });
-      message.error("無法連接，請稍後再試!");
-      console.log("fetch keyword history error", error);
-    }
   }
 
   // jieba
-  async FetchJiebaList() {
+  FetchJiebaList() {
     // fetch jieba button state
     this.setState({ FetchjiebaListDisabledState: true, FetchjiebaListLoadingState: true });
-    try {
-      const fetchJiebaList = await fetch("/jieba?page=" + this.state.SourceTextSelectedOption);
-      const responseData = await fetchJiebaList.json();
+    axios
+      .get("/jieba?page=" + this.state.SourceTextSelectedOption)
+      .then(response => {
+        const JiebaListArray = [];
+        response.data.forEach(value => {
+          JiebaListArray.push(value.word);
+          // 將資料push 至 table view
+          this.state.jiebaList.push({ word: value.word, weight: value.weight.toFixed(2) });
+        });
 
-      const JiebaListArray = [];
-      responseData.forEach(value => {
-        JiebaListArray.push(value.word);
+        // source tx 標記jieba顏色
+        this.setState({
+          SourceText: this.state.SourceText.replace(
+            new RegExp(JiebaListArray.join("|"), "g"),
+            val => `<em style="color:#2897ff;">${val}</em>`
+          )
+        });
 
-        // 將資料push 至 table view
-        this.state.jiebaList.push({ word: value.word, weight: value.weight.toFixed(2) });
+        // render jieba table view
+        this.setState({ jiebaLoadingState: true, FetchjiebaListLoadingState: false });
+      })
+      .catch(error => {
+        this.setState({ FetchjiebaListLoadingState: false });
+        message.error("無法連接，請稍後再試!");
+        console.log("fetch jieba error", error);
       });
-
-      // source tx 標記jieba顏色
-      this.setState({
-        SourceText: this.state.SourceText.replace(
-          new RegExp(JiebaListArray.join("|"), "g"),
-          val => `<span style="color:#2897ff;">${val}</span>`
-        )
-      });
-
-      // render jieba table view
-      this.setState({ jiebaLoadingState: true, FetchjiebaListLoadingState: false });
-    } catch (error) {
-      this.setState({ FetchjiebaListLoadingState: false });
-      message.error("無法連接，請稍後再試!");
-      console.log("fetch jieba error", error);
-    }
   }
 
   // handle 下拉組件
@@ -193,14 +196,23 @@ class KeyWordIdentify extends Component {
   // Ur人工標色
   GetSelectedText() {
     let Selection = window.getSelection().getRangeAt(0);
-
-    console.log(window.getSelection().toString());
     let SelectedText = Selection.extractContents();
     let SelectSpan = document.createElement("span");
-    SelectSpan.style.backgroundColor = "#EA0000";
     SelectSpan.appendChild(SelectedText);
     Selection.insertNode(SelectSpan);
-    this.state.GetSelectedTextList.push(Selection.toString());
+
+    if (Selection.toString() !== "") {
+      this.state.GetSelectedTextList.push(Selection.toString());
+
+      // 復原標記 list
+      this.state.UrTagRecovery.push(Selection.toString());
+      this.setState({
+        SourceText: this.state.SourceText.replace(
+          Selection.toString(),
+          `<span style="background-color: rgb(234, 0, 0);">${Selection.toString()}</span>`
+        )
+      });
+    }
   }
 
   // Ur人工新增
@@ -210,41 +222,64 @@ class KeyWordIdentify extends Component {
   RemoveTextTagRange() {
     this.setState({
       SourceText: this.state.SourceText.replace(
-        this.state.UrTagRecovery,
-        `<span style="backgroundColor:rgba(255,255,255,0);">${this.state.UrTagRecovery}</span>`
+        `<span style="background-color: rgb(234, 0, 0);">${this.state.UrTagRecovery.slice(-1)[0]}</span>`,
+        this.state.UrTagRecovery.pop()
       )
     });
+    this.state.GetSelectedTextList.pop();
   }
 
   renderBtnItem = () => (
     <div className="ButtonItem">
       <Buttons
-        type="primary"
+        Type={"primary"}
+        Text={"讀取歷史Kw"}
+        Icon={"database"}
         loading={this.state.FetchKeyWordHistoryLoadingState}
         disabled={this.state.FetchKeyWordHistoryDisabledState}
-        Text={"讀取歷史Kw庫"}
         onClick={() => {
           this.FetchKeyWordHistory();
         }}
       />
       <Buttons
+        Type={"primary"}
+        Text={"讀取pKw"}
+        Icon={"database"}
         loading={this.state.FetchjiebaListLoadingState}
         disabled={this.state.FetchjiebaListDisabledState}
-        Text={"透過TextRank算出pKw"}
         onClick={() => {
           this.FetchJiebaList();
         }}
       />
       <Buttons
-        Text={"新增標記至資料庫"}
+        Type="primary"
+        Text={"新增標記"}
+        Icon={"file-add"}
+        disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
         onClick={() => {
           // this.InsertTextTag();
         }}
       />
       <Buttons
-        Text={"取消標記"}
+        Type={"primary"}
+        Text={"復原標記"}
+        Icon={"reload"}
+        disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
         onClick={() => {
           this.RemoveTextTagRange();
+        }}
+      />
+      <Buttons
+        Type={"primary"}
+        Text={"復原全部標記"}
+        Icon={"reload"}
+        disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
+        onClick={() => {
+          this.setState({
+            SourceText: this.state.SourceText.replace(/<\/?span[^>]*>/g, ""),
+            GetSelectedTextList: [],
+            UrTagRecovery: []
+          });
         }}
       />
     </div>
@@ -268,15 +303,25 @@ class KeyWordIdentify extends Component {
         </div>
         {this.renderBtnItem()}
         <div className="SourceText">
-          {this.state.SourceTextLoadingState ? (
-            <span
-              id="SourceTextItem"
-              onMouseUp={() => this.GetSelectedText()}
-              dangerouslySetInnerHTML={{ __html: this.state.SourceText }}
+          <div id="SourceTextItem">
+            {this.state.SourceTextLoadingState ? (
+              <div
+                id="SourceTextContent"
+                onMouseUp={() => this.GetSelectedText()}
+                dangerouslySetInnerHTML={{ __html: this.state.SourceText }}
+              />
+            ) : (
+              <Icon type="loading" style={{ fontSize: 24 }} spin />
+            )}
+          </div>
+          <div id="ManualTag-List">
+            <List
+              header={<div>已標注的kw</div>}
+              bordered
+              dataSource={this.state.GetSelectedTextList}
+              renderItem={item => <List.Item>{item}</List.Item>}
             />
-          ) : (
-            <Icon type="loading" style={{ fontSize: 24 }} spin />
-          )}
+          </div>
         </div>
         <div className="TableComponent">
           {this.state.KwTotalLoadingState ? KwHistoryTable(this.state.KwTotal) : null}

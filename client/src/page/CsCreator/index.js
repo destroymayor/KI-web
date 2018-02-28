@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Button, Collapse, Icon, Input, Select, message, Spin, Popover, Popconfirm, Table } from "antd";
 
 import React, { Component } from "react";
@@ -46,32 +47,32 @@ class CsCreator extends Component {
   }
 
   //讀取sourceText庫資料
-  async _FetchSourceText() {
-    try {
-      const fetchSourceText = await fetch("/sourcetext");
-      const responseData = await fetchSourceText.json();
-      //select option
-      responseData.forEach((value, index) => {
-        this.state.SourceTextSelectItem.push(
-          <Option key={index} value={index + 1}>
-            {value.content}
-          </Option>
-        );
-        //參看原文章list
-        this.state.ArticlePreviewList.push(value.content);
+  _FetchSourceText() {
+    axios
+      .get("/sourcetext")
+      .then(response => {
+        //select option
+        response.data.forEach((value, index) => {
+          this.state.SourceTextSelectItem.push(
+            <Option key={index} value={index + 1}>
+              {value.content}
+            </Option>
+          );
+          //參看原文章list
+          this.state.ArticlePreviewList.push(value.content);
+        });
+      })
+      .catch(error => {
+        console.log("fetch source text", error);
+        message.error("無法連接，請稍後再試!");
       });
-    } catch (error) {
-      message.error("無法連接，請稍後再試!");
-    }
   }
 
   ArticlePreviewTagColor(value) {
     const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
-    const pkwTagColor = this.state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle);
-
     if (this.state.ArticlePreview.search(TagStyle) === -1) {
       this.setState({
-        ArticlePreview: pkwTagColor,
+        ArticlePreview: this.state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle),
         ArticlePreviewLoadingState: true
       });
     }
@@ -79,49 +80,49 @@ class CsCreator extends Component {
 
   ArticlePreviewRemoveTagColor(value) {
     const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
-    const RemoveBeforeTag = this.state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value);
     if (this.state.ArticlePreview.search(TagStyle) !== -1) {
-      this.setState({ ArticlePreview: RemoveBeforeTag });
+      this.setState({ ArticlePreview: this.state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value) });
     }
   }
 
-  async Fetch_JiebaList(pageNumber) {
+  Fetch_JiebaList(pageNumber) {
     const pKwSelectLists = [];
-    try {
-      const fetchData = await fetch("/jieba?page=" + pageNumber);
-      const responseData = await fetchData.json();
+    axios
+      .get("/jieba?page=" + pageNumber)
+      .then(response => {
+        // 多選component
+        response.data.forEach((value, index) => {
+          pKwSelectLists.push(
+            <Option
+              onMouseEnter={async value => {
+                await this.ArticlePreviewRemoveTagColor(this.state.ArticlePreviewRemoveTag);
+                await this.ArticlePreviewTagColor(value.key);
+              }}
+              onMouseLeave={value => {
+                this.ArticlePreviewRemoveTagColor(value.key);
+                this.setState({ ArticlePreviewRemoveTag: value.key });
+              }}
+              key={value.word}
+            >
+              {value.word}
+            </Option>
+          );
 
-      // 多選component
-      responseData.forEach((value, index) => {
-        pKwSelectLists.push(
-          <Option
-            onMouseEnter={async value => {
-              await this.ArticlePreviewRemoveTagColor(this.state.ArticlePreviewRemoveTag);
-              await this.ArticlePreviewTagColor(value.key);
-            }}
-            onMouseLeave={value => {
-              this.ArticlePreviewRemoveTagColor(value.key);
-              this.setState({ ArticlePreviewRemoveTag: value.key });
-            }}
-            key={value.word}
-          >
-            {value.word}
-          </Option>
-        );
+          //cs select list
+          this.state.CsAdd_SelectList.push(<Option key={parseInt(index + 1, 10)}>{value.word}</Option>);
+        });
 
-        //cs select list
-        this.state.CsAdd_SelectList.push(<Option key={parseInt(index + 1, 10)}>{value.word}</Option>);
+        this.setState({
+          // pkw select list state
+          CsAdd_CustomizeSelectComponent: pKwSelectLists,
+          //參看原文章篇數
+          ArticlePreview: this.state.ArticlePreviewList[pageNumber - 1]
+        });
+      })
+      .catch(error => {
+        console.log("fetch jieba list", error);
+        message.error("無法連接，請稍後再試!");
       });
-
-      this.setState({
-        // pkw select list state
-        CsAdd_CustomizeSelectComponent: pKwSelectLists,
-        //參看原文章篇數
-        ArticlePreview: this.state.ArticlePreviewList[pageNumber - 1]
-      });
-    } catch (error) {
-      message.error("無法連接，請稍後再試!");
-    }
   }
 
   //handle select source tx
