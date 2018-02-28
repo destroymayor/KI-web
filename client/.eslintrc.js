@@ -17,7 +17,8 @@ module.exports = {
     "react/display-name": 1,
     "no-unused-vars": "warn",
     "no-unexpected-multiline": "warn",
-    "no-console": "off"
+    "no-console": "off",
+    "react/prop-types": 0
   },
   settings: {
     react: {

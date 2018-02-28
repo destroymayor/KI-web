@@ -25,7 +25,7 @@ class Routers extends Component {
       <Switch>
         <Route exact path="/" component={Login} />
         <Route path="/Chat" component={ChatRoom} />
-        <Route path="/Ki" component={KeyWordIdentify} />
+        <Route path="/KeywordIdentify" component={KeyWordIdentify} />
         <Route path="/CsCreator" component={CsCreator} />
         <Route component={() => <Notfound NotfoundText="您訪問的頁面不存在" />} />
       </Switch>

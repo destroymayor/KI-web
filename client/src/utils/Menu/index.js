@@ -1,11 +1,8 @@
+import { Menu, Icon } from "antd";
+
+import { Link } from "react-router-dom";
 import React, { Component } from "react";
 import "./index.css";
-
-//載入react router組件庫
-import { Link } from "react-router-dom";
-
-//載入ant design 組件庫
-import { Menu, Icon } from "antd";
 
 class Menus extends Component {
   _renderLoginPage = () => (
@@ -32,8 +29,8 @@ class Menus extends Component {
 
   _renderExpert = () => (
     <Menu>
-      <Menu.Item key="Ki">
-        <Link to="/Ki">Keyword Identify</Link>
+      <Menu.Item key="KeywordIdentify">
+        <Link to="/KeywordIdentify">Keyword Identify</Link>
       </Menu.Item>
       <Menu.Item key="CsCreator">
         <Link to="/CsCreator">CsCreator</Link>

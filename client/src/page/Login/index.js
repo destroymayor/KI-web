@@ -45,7 +45,7 @@ class Login extends Component {
             history.push("/Login");
             break;
           case "Expert":
-            history.push("/Ki");
+            history.push("/KeywordIdentify");
             break;
           default:
             break;

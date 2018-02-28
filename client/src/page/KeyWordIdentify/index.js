@@ -238,7 +238,7 @@ class KeyWordIdentify extends Component {
       <Buttons
         Text={"新增標記至資料庫"}
         onClick={() => {
-          this.InsertTextTag();
+          // this.InsertTextTag();
         }}
       />
       <Buttons

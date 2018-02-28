@@ -36,7 +36,8 @@ class CsCreator extends Component {
       // 選擇pkw時參看原文章
       ArticlePreviewList: [],
       ArticlePreview: "",
-      ArticlePreviewLoadingState: false
+      ArticlePreviewLoadingState: false,
+      ArticlePreviewRemoveTag: null
     };
   }
 
@@ -56,12 +57,31 @@ class CsCreator extends Component {
             {value.content}
           </Option>
         );
-
         //參看原文章list
         this.state.ArticlePreviewList.push(value.content);
       });
     } catch (error) {
       message.error("無法連接，請稍後再試!");
+    }
+  }
+
+  ArticlePreviewTagColor(value) {
+    const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
+    const pkwTagColor = this.state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle);
+
+    if (this.state.ArticlePreview.search(TagStyle) === -1) {
+      this.setState({
+        ArticlePreview: pkwTagColor,
+        ArticlePreviewLoadingState: true
+      });
+    }
+  }
+
+  ArticlePreviewRemoveTagColor(value) {
+    const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
+    const RemoveBeforeTag = this.state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value);
+    if (this.state.ArticlePreview.search(TagStyle) !== -1) {
+      this.setState({ ArticlePreview: RemoveBeforeTag });
     }
   }
 
@@ -75,23 +95,13 @@ class CsCreator extends Component {
       responseData.forEach((value, index) => {
         pKwSelectLists.push(
           <Option
-            onMouseEnter={value => {
-              const pkwTagColor = this.state.ArticlePreview.replace(
-                new RegExp(value.key, "g"),
-                `<span style="background-color:#2897ff;">${value.key}</span>`
-              );
-              // 參看原文章
-              this.setState({
-                ArticlePreview: pkwTagColor,
-                ArticlePreviewLoadingState: true
-              });
+            onMouseEnter={async value => {
+              await this.ArticlePreviewRemoveTagColor(this.state.ArticlePreviewRemoveTag);
+              await this.ArticlePreviewTagColor(value.key);
             }}
             onMouseLeave={value => {
-              // 標記顏色復原
-              this.setState({
-                ArticlePreview: this.state.ArticlePreview.replace(/<\/?span[^>]*>/g, "")
-              });
-              //  /<\s*\w*\s*style.*?>/g
+              this.ArticlePreviewRemoveTagColor(value.key);
+              this.setState({ ArticlePreviewRemoveTag: value.key });
             }}
             key={value.word}
           >
@@ -118,8 +128,8 @@ class CsCreator extends Component {
   handleSelectSourceText = selectValue => {
     this.setState({
       CsAdd_SelectList: [],
-      SelectPkwList: [],
-      SelectCsList: ""
+      SelectCsList: "",
+      ArticlePreviewLoadingState: false
     });
     this.Fetch_JiebaList(selectValue.key);
   };
@@ -211,7 +221,8 @@ class CsCreator extends Component {
           onChange={value =>
             this.setState({
               //自定義Cs
-              SelectCsList: value.target.value
+              SelectCsList: value.target.value,
+              AddCs_KwState: false
             })
           }
         />
@@ -220,17 +231,11 @@ class CsCreator extends Component {
   );
 
   _renderTotalTable = () => {
-    const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys, selectedRows);
-      }
-    };
     return (
       <Table
         className="CsCreator-TableComponent"
         dataSource={this.state.CsCreator_TotalItem}
         size={"small"}
-        rowSelection={rowSelection}
         pagination={false}
         rowKey={key => key.Cs}
         footer={() => <Button disabled={this.state.Cs_KwListToDataBaseBtnState}>確認全部加入</Button>}
