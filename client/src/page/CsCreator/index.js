@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Button, Collapse, Icon, Input, Select, message, Spin, Popover, Popconfirm, Table } from "antd";
+import { Button, Collapse, List, Icon, Select, message, Spin, Popover, Table } from "antd";
 
 import React, { Component } from "react";
 import "./index.css";
@@ -16,18 +16,15 @@ class CsCreator extends Component {
     this.state = {
       SourceTextSelectItem: [],
       SourceTextSelectedPlaceholder: "",
-      // 切換Cs選擇模式
-      CsSwitchMode: true,
       // Cs select多選 list
       CsAdd_CustomizeSelectComponent: [],
-      // 添加Cs-Kw按鈕狀態
-      AddCs_KwState: true,
+      FetchJiebaListState: true,
+      // pKw List
+      Pkw_MultipleList: [],
+      // pkw 選擇後的list
+      Pkw_SelectList: [],
       // Cs Select Component option
       CsAdd_SelectList: [],
-      // 選擇Cs後的 List
-      SelectCsList: "",
-      // 選擇pKw後的 List
-      SelectPkwList: [],
       // 選擇Cs-Lv
       SelectCsLv: "",
       //cs kw total item
@@ -87,32 +84,19 @@ class CsCreator extends Component {
 
   Fetch_JiebaList(pageNumber) {
     const pKwSelectLists = [];
+    this.setState({ FetchJiebaListState: false });
     axios
       .get("/jieba?page=" + pageNumber)
       .then(response => {
         // 多選component
-        response.data.forEach((value, index) => {
-          pKwSelectLists.push(
-            <Option
-              onMouseEnter={async value => {
-                await this.ArticlePreviewRemoveTagColor(this.state.ArticlePreviewRemoveTag);
-                await this.ArticlePreviewTagColor(value.key);
-              }}
-              onMouseLeave={value => {
-                this.ArticlePreviewRemoveTagColor(value.key);
-                this.setState({ ArticlePreviewRemoveTag: value.key });
-              }}
-              key={value.word}
-            >
-              {value.word}
-            </Option>
-          );
-
+        response.data.forEach(value => {
+          // Pkw MultipleList
+          this.state.Pkw_MultipleList.push(value.word);
           //cs select list
-          this.state.CsAdd_SelectList.push(<Option key={parseInt(index + 1, 10)}>{value.word}</Option>);
+          this.state.CsAdd_SelectList.push(value.word);
         });
-
         this.setState({
+          FetchJiebaListState: true,
           // pkw select list state
           CsAdd_CustomizeSelectComponent: pKwSelectLists,
           //參看原文章篇數
@@ -129,31 +113,34 @@ class CsCreator extends Component {
   handleSelectSourceText = selectValue => {
     this.setState({
       CsAdd_SelectList: [],
-      SelectCsList: "",
+      Pkw_MultipleList: [],
+      FetchJiebaListState: false,
       ArticlePreviewLoadingState: false
     });
     this.Fetch_JiebaList(selectValue.key);
   };
 
   //total 選擇handle
-  handleAddCs_Kw = () => {
+  handleAddCs_Kw = item => {
     this.state.CsCreator_TotalItem.push({
-      Cs: this.state.SelectCsList,
-      Kw: this.state.SelectPkwList
+      index: this.state.CsAdd_SelectList.indexOf(item),
+      Cs: item,
+      Kw: this.state.Pkw_SelectList
     });
     this.setState({
-      ArticlePreviewLoadingState: false,
-      AddCs_KwState: true,
+      CsAdd_SelectList: this.state.CsAdd_SelectList.filter(val => val !== item),
+      // 清空已選的pkw list
+      Pkw_SelectList: [],
       Cs_KwListToDataBaseBtnState: false
     });
   };
 
   _renderSelectSourceText = () => (
-    <div className="CsCreator-AddItem">
-      <div>選擇文章</div>
+    <React.Fragment>
+      <p>選擇文章</p>
       <Select
         className="CsCreator_SelectComponent"
-        style={{ width: 300, marginLeft: 10 }}
+        style={{ width: 400, marginLeft: 10 }}
         labelInValue
         notFoundContent={<Spin size="small" />}
         placeholder={this.state.SourceTextSelectedPlaceholder}
@@ -161,80 +148,74 @@ class CsCreator extends Component {
       >
         {this.state.SourceTextSelectItem}
       </Select>
+    </React.Fragment>
+  );
+
+  _renderPkwMultipleItem = () => (
+    <div className="CsCreator-AddItem">
+      <p>pKw</p>
+      <List
+        style={{ width: "100%", padding: 0, height: 300, overflow: "auto" }}
+        header={<p>多選pkw {this.state.FetchJiebaListState ? null : <Icon type="loading" />}</p>}
+        bordered
+        dataSource={this.state.Pkw_MultipleList}
+        renderItem={item => (
+          <List.Item style={{ padding: 0 }}>
+            <Button
+              id="CsCreator-CsItemButton"
+              onClick={() => {
+                if (this.state.Pkw_SelectList.indexOf(item) === -1) {
+                  this.setState({ Pkw_SelectItemState: true });
+                  this.state.Pkw_SelectList.push(item);
+                }
+              }}
+              onMouseEnter={async () => {
+                await this.ArticlePreviewRemoveTagColor(item);
+                await this.ArticlePreviewTagColor(item);
+              }}
+              onMouseLeave={() => {
+                this.ArticlePreviewRemoveTagColor(item);
+              }}
+            >
+              {item}
+              {this.state.Pkw_SelectList.indexOf(item) === -1 ? null : (
+                <Icon style={{ color: "#2897ff" }} type="check" />
+              )}
+            </Button>
+          </List.Item>
+        )}
+      />
     </div>
   );
 
-  _renderPkwSelectItem = () => (
+  _renderCsItem = () => (
     <div className="CsCreator-AddItem">
-      <div>pKw</div>
-      <Select
-        style={{ width: "87%", marginLeft: 10 }}
-        className="CsCreator-pKwSelectComponent"
-        allowClear={true}
-        mode="tags"
-        notFoundContent={<Spin size="small" />}
-        onChange={value => {
-          // pkw select list
-          this.setState({ SelectPkwList: value });
-        }}
-      >
-        {this.state.CsAdd_CustomizeSelectComponent}
-      </Select>
-    </div>
-  );
-
-  _renderCsInputItem = () => (
-    <div className="CsCreator-AddItem">
-      <Button
-        type="primary"
-        icon={this.state.CsSwitchMode ? "profile" : "edit"}
-        onClick={() => {
-          this.setState({
-            CsSwitchMode: !this.state.CsSwitchMode,
-            AddCs_KwState: true,
-            SelectCsList: ""
-          });
-        }}
-      >
-        {!this.state.CsSwitchMode ? "選擇Cs" : "自定義Cs"}
-      </Button>
-      {!this.state.CsSwitchMode ? (
-        <Select
-          style={{ width: "100%", marginLeft: 10 }}
-          className="CsCreator-SelectComponent"
-          labelInValue
-          notFoundContent={<Spin size="small" />}
-          onChange={value => {
-            //選擇Cs
-            this.setState({
-              SelectCsList: value.label,
-              AddCs_KwState: false
-            });
-          }}
-        >
-          {this.state.CsAdd_SelectList}
-        </Select>
-      ) : (
-        <Input
-          style={{ width: "100%", marginLeft: 10 }}
-          placeholder="Cs"
-          value={this.state.SelectCsList}
-          onChange={value =>
-            this.setState({
-              //自定義Cs
-              SelectCsList: value.target.value,
-              AddCs_KwState: false
-            })
-          }
-        />
-      )}
+      <p>Cs</p>
+      <List
+        style={{ width: "100%", height: 300, overflow: "auto" }}
+        header={<p>雙擊加入Cs {this.state.FetchJiebaListState ? null : <Icon type="loading" />}</p>}
+        bordered
+        dataSource={this.state.CsAdd_SelectList}
+        renderItem={item => (
+          <List.Item style={{ padding: 0 }}>
+            <Button
+              id="CsCreator-CsItemButton"
+              style={{ width: "100%" }}
+              onDoubleClick={() => {
+                this.handleAddCs_Kw(item);
+              }}
+            >
+              {item}
+            </Button>
+          </List.Item>
+        )}
+      />
     </div>
   );
 
   _renderTotalTable = () => {
     return (
       <Table
-        className="CsCreator-TableComponent"
         dataSource={this.state.CsCreator_TotalItem}
         size={"small"}
         pagination={false}
@@ -296,20 +277,18 @@ class CsCreator extends Component {
             dataIndex: "operation",
             render: (text, record) =>
               this.state.CsCreator_TotalItem.length > 0 ? (
-                <Popconfirm
-                  title="確定要刪除此項?"
-                  okText="確定"
-                  cancelText="取消"
-                  onConfirm={key => {
+                <Button
+                  onClick={() => {
                     this.setState({
                       CsCreator_TotalItem: this.state.CsCreator_TotalItem.filter(
                         item => item.Cs !== record.Cs
                       )
                     });
+                    this.state.CsAdd_SelectList.splice(record.index, 0, record.Cs);
                   }}
-                >
-                  <Button shape="circle" icon="delete" />
-                </Popconfirm>
+                  shape="circle"
+                  icon="delete"
+                />
               ) : null
           }
         ]}
@@ -323,17 +302,10 @@ class CsCreator extends Component {
         <Menu renderPage="Expert" />
         <div className="CsCreator-IndexItem">
           <div className="CsCreator-Item">
+            {this._renderSelectSourceText()}
             <div className="CsCreator-Add">
-              {this._renderSelectSourceText()}
-              {this._renderPkwSelectItem()}
-              {this._renderCsInputItem()}
-              <Button
-                disabled={this.state.AddCs_KwState}
-                className="CsCreator-AddBtn"
-                onClick={this.handleAddCs_Kw}
-              >
-                添加
-              </Button>
+              {this._renderPkwMultipleItem()}
+              {this._renderCsItem()}
             </div>
             <div className="CsCreator-ItemTableComponent">{this._renderTotalTable()}</div>
           </div>

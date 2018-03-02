@@ -15,7 +15,6 @@
 .CsCreator-Item {
   flex: 1;
   flex-direction: column;
-  justify-content: center;
   margin: 10px;
 }
 
@@ -27,29 +26,23 @@
 
 .CsCreator-Add {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  margin: 0 10px 10px 10px;
-  padding: 0 10px 10px 0;
-  border-radius: 10px;
-  background: #f3f3f3;
+  align-items: center;
 }
 
 .CsCreator-AddItem {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin: 10px 10px 0 10px;
-  height: 50px;
+  margin: 10px 10px 10px 10px;
+  width: 50%;
+}
+
+#CsCreator-CsItemButton {
+  width: 100%;
+  border: 0px;
 }
 
 .CsCreator-ItemTableComponent {
   align-self: center;
   margin: 10px 10px 0 10px;
-}
-
-.CsCreator-SelectComponent {
 }
 
 .CsCreator-AddBtn {

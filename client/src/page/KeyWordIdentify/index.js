@@ -219,14 +219,17 @@ class KeyWordIdentify extends Component {
   // InsertTextTag() {}
 
   // 復原Ur選取標記
-  RemoveTextTagRange() {
+  RemoveTextTagRange(item) {
     this.setState({
       SourceText: this.state.SourceText.replace(
-        `<span style="background-color: rgb(234, 0, 0);">${this.state.UrTagRecovery.slice(-1)[0]}</span>`,
-        this.state.UrTagRecovery.pop()
+        `<span style="background-color: rgb(234, 0, 0);">${item}</span>`,
+        item
       )
     });
-    this.state.GetSelectedTextList.pop();
+    this.setState({
+      UrTagRecovery: this.state.UrTagRecovery.filter(val => val !== item),
+      GetSelectedTextList: this.state.GetSelectedTextList.filter(val => val !== item)
+    });
   }
 
   renderBtnItem = () => (
@@ -258,15 +261,6 @@ class KeyWordIdentify extends Component {
         disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
         onClick={() => {
           // this.InsertTextTag();
-        }}
-      />
-      <Buttons
-        Type={"primary"}
-        Text={"復原標記"}
-        Icon={"reload"}
-        disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
-        onClick={() => {
-          this.RemoveTextTagRange();
         }}
       />
       <Buttons
@@ -319,7 +313,19 @@ class KeyWordIdentify extends Component {
               header={<div>已標注的kw</div>}
               bordered
               dataSource={this.state.GetSelectedTextList}
-              renderItem={item => <List.Item>{item}</List.Item>}
+              renderItem={item => (
+                <List.Item>
+                  <div id="ManualTag-ListItem">
+                    {item}
+                    <Buttons
+                      Icon={"delete"}
+                      onClick={() => {
+                        this.RemoveTextTagRange(item);
+                      }}
+                    />
+                  </div>
+                </List.Item>
+              )}
             />
           </div>
         </div>
