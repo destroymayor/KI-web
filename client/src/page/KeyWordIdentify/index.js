@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Icon, List, message, Select } from "antd";
+import { Icon, List, message, Spin, Select } from "antd";
 
 import React, { Component } from "react";
 import "./index.css";
@@ -232,7 +232,23 @@ class KeyWordIdentify extends Component {
     });
   }
 
-  renderBtnItem = () => (
+  _renderSelectPageComponent = () => (
+    <div className="SelectComponent">
+      <div>選擇文章</div>
+      <Select
+        className="KI_selectComponent"
+        style={{ width: 300 }}
+        labelInValue
+        notFoundContent={<Spin size="small" />}
+        placeholder={this.state.SourceTextSelectedOption}
+        onChange={this.HandleSelect}
+      >
+        {this.state.SourceTextSelectItem}
+      </Select>
+    </div>
+  );
+
+  _renderBtnItem = () => (
     <div className="ButtonItem">
       <Buttons
         Type={"primary"}
@@ -279,55 +295,52 @@ class KeyWordIdentify extends Component {
     </div>
   );
 
+  _renderSourceText = () => (
+    <div id="SourceTextItem">
+      {this.state.SourceTextLoadingState ? (
+        <div
+          id="SourceTextContent"
+          onMouseUp={() => this.GetSelectedText()}
+          dangerouslySetInnerHTML={{ __html: this.state.SourceText }}
+        />
+      ) : (
+        <Icon type="loading" style={{ fontSize: 24 }} spin />
+      )}
+    </div>
+  );
+
+  _renderManualTagList = () => (
+    <div id="ManualTag-List">
+      <List
+        header={<div>已標注的kw</div>}
+        bordered
+        dataSource={this.state.GetSelectedTextList}
+        renderItem={item => (
+          <List.Item>
+            <div id="ManualTag-ListItem">
+              {item}
+              <Buttons
+                Icon={"delete"}
+                onClick={() => {
+                  this.RemoveTextTagRange(item);
+                }}
+              />
+            </div>
+          </List.Item>
+        )}
+      />
+    </div>
+  );
+
   render() {
     return (
       <div className="Ki">
         <Menu renderPage="Expert" />
-        <div className="SelectComponent">
-          <div>選擇文章</div>
-          <Select
-            className="KI_selectComponent"
-            style={{ width: 300 }}
-            labelInValue
-            placeholder={this.state.SourceTextSelectedOption}
-            onChange={this.HandleSelect}
-          >
-            {this.state.SourceTextSelectItem}
-          </Select>
-        </div>
-        {this.renderBtnItem()}
+        {this._renderSelectPageComponent()}
+        {this._renderBtnItem()}
         <div className="SourceText">
-          <div id="SourceTextItem">
-            {this.state.SourceTextLoadingState ? (
-              <div
-                id="SourceTextContent"
-                onMouseUp={() => this.GetSelectedText()}
-                dangerouslySetInnerHTML={{ __html: this.state.SourceText }}
-              />
-            ) : (
-              <Icon type="loading" style={{ fontSize: 24 }} spin />
-            )}
-          </div>
-          <div id="ManualTag-List">
-            <List
-              header={<div>已標注的kw</div>}
-              bordered
-              dataSource={this.state.GetSelectedTextList}
-              renderItem={item => (
-                <List.Item>
-                  <div id="ManualTag-ListItem">
-                    {item}
-                    <Buttons
-                      Icon={"delete"}
-                      onClick={() => {
-                        this.RemoveTextTagRange(item);
-                      }}
-                    />
-                  </div>
-                </List.Item>
-              )}
-            />
-          </div>
+          {this._renderSourceText()}
+          {this._renderManualTagList()}
         </div>
         <div className="TableComponent">
           {this.state.KwTotalLoadingState ? KwHistoryTable(this.state.KwTotal) : null}

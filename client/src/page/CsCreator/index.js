@@ -23,13 +23,14 @@ class CsCreator extends Component {
       Pkw_MultipleList: [],
       // pkw 選擇後的list
       Pkw_SelectList: [],
+      Pkw_SelectItemState: true,
       // Cs Select Component option
       CsAdd_SelectList: [],
       // 選擇Cs-Lv
       SelectCsLv: "",
       //cs kw total item
       CsCreator_TotalItem: [],
-      //table添加至db的button state
+      //table 添加至db的 button state
       Cs_KwListToDataBaseBtnState: true,
       // 選擇pkw時參看原文章
       ArticlePreviewList: [],
@@ -65,23 +66,6 @@ class CsCreator extends Component {
       });
   }
 
-  ArticlePreviewTagColor(value) {
-    const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
-    if (this.state.ArticlePreview.search(TagStyle) === -1) {
-      this.setState({
-        ArticlePreview: this.state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle),
-        ArticlePreviewLoadingState: true
-      });
-    }
-  }
-
-  ArticlePreviewRemoveTagColor(value) {
-    const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
-    if (this.state.ArticlePreview.search(TagStyle) !== -1) {
-      this.setState({ ArticlePreview: this.state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value) });
-    }
-  }
-
   Fetch_JiebaList(pageNumber) {
     const pKwSelectLists = [];
     this.setState({ FetchJiebaListState: false });
@@ -109,7 +93,8 @@ class CsCreator extends Component {
       });
   }
 
-  //handle select source tx
+  // handle event //
+  // select source tx
   handleSelectSourceText = selectValue => {
     this.setState({
       CsAdd_SelectList: [],
@@ -120,7 +105,36 @@ class CsCreator extends Component {
     this.Fetch_JiebaList(selectValue.key);
   };
 
-  //total 選擇handle
+  // pkw multiple add or remove
+  handlePkwMultiple = item => {
+    this.setState({ Pkw_SelectItemState: !this.state.Pkw_SelectItemState });
+    return this.state.Pkw_SelectList.indexOf(item) !== -1
+      ? this.setState({
+          Pkw_SelectList: this.state.Pkw_SelectList.filter(val => val !== item)
+        })
+      : this.state.Pkw_SelectList.push(item);
+  };
+
+  // article preview tag color
+  ArticlePreviewTagColor(value) {
+    const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
+    if (this.state.ArticlePreview.search(TagStyle) === -1) {
+      this.setState({
+        ArticlePreview: this.state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle),
+        ArticlePreviewLoadingState: true
+      });
+    }
+  }
+
+  // article preview remove tag color
+  ArticlePreviewRemoveTagColor(value) {
+    const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
+    if (this.state.ArticlePreview.search(TagStyle) !== -1) {
+      this.setState({ ArticlePreview: this.state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value) });
+    }
+  }
+
+  // total add to table
   handleAddCs_Kw = item => {
     this.state.CsCreator_TotalItem.push({
       index: this.state.CsAdd_SelectList.indexOf(item),
@@ -135,12 +149,15 @@ class CsCreator extends Component {
     });
   };
 
+  // handle event //
+
   _renderSelectSourceText = () => (
     <React.Fragment>
       <p>選擇文章</p>
       <Select
         className="CsCreator_SelectComponent"
         style={{ width: 400, marginLeft: 10 }}
+        autoFocus
         labelInValue
         notFoundContent={<Spin size="small" />}
         placeholder={this.state.SourceTextSelectedPlaceholder}
@@ -164,10 +181,7 @@ class CsCreator extends Component {
             <Button
               id="CsCreator-CsItemButton"
               onClick={() => {
-                if (this.state.Pkw_SelectList.indexOf(item) === -1) {
-                  this.setState({ Pkw_SelectItemState: true });
-                  this.state.Pkw_SelectList.push(item);
-                }
+                this.handlePkwMultiple(item);
               }}
               onMouseEnter={async () => {
                 await this.ArticlePreviewRemoveTagColor(item);
