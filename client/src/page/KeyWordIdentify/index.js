@@ -43,16 +43,24 @@ class KeyWordIdentify extends Component {
       FetchKeyWordHistoryDisabledState: true,
       FetchKeyWordHistoryLoadingState: false
     };
+
+    this.CancelToken = axios.CancelToken.source();
   }
 
   componentDidMount() {
     this.FetchSourceText();
   }
 
+  componentWillUnmount() {
+    if (this.CancelToken) {
+      this.CancelToken.cancel("KeywordIdentify Component Is Unmounting");
+    }
+  }
+
   // 讀取sourceText庫資料
   FetchSourceText() {
     axios
-      .get("/sourcetext")
+      .get("/sourcetext", { cancelToken: this.CancelToken.token })
       .then(response => {
         response.data.forEach((value, index) => {
           this.state.SourceTextSelectItem.push(
@@ -90,7 +98,7 @@ class KeyWordIdentify extends Component {
     });
     const KwHistoryArray = [];
     axios
-      .get("/keywordhistory")
+      .get("/keywordhistory", { cancelToken: this.CancelToken.token })
       .then(response => {
         response.data.forEach(value => {
           KwHistoryArray.push(value.name);
@@ -145,7 +153,7 @@ class KeyWordIdentify extends Component {
     // fetch jieba button state
     this.setState({ FetchjiebaListDisabledState: true, FetchjiebaListLoadingState: true });
     axios
-      .get("/jieba?page=" + this.state.SourceTextSelectedOption)
+      .get("/jieba?page=" + this.state.SourceTextSelectedOption, { cancelToken: this.CancelToken.token })
       .then(response => {
         const JiebaListArray = [];
         response.data.forEach(value => {

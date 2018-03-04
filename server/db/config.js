@@ -29,7 +29,7 @@ const Query = sql =>
 
         resolve(rows);
 
-        return console.log(` \nConnection closed => ${new Date().toLocaleString()} \n `);
+        return console.log(` \n ${sql} \n Connection closed => ${new Date().toLocaleString()} \n `);
       });
     });
   });

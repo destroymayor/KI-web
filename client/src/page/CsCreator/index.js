@@ -38,16 +38,24 @@ class CsCreator extends Component {
       ArticlePreviewLoadingState: false,
       ArticlePreviewRemoveTag: null
     };
+
+    this.CancelToken = axios.CancelToken.source();
   }
 
   componentDidMount() {
     this._FetchSourceText();
   }
 
+  componentWillUnmount() {
+    if (this.CancelToken) {
+      this.CancelToken.cancel("CsCreator Component Is Unmounting");
+    }
+  }
+
   //讀取sourceText庫資料
   _FetchSourceText() {
     axios
-      .get("/sourcetext")
+      .get("/sourcetext", { cancelToken: this.CancelToken.token })
       .then(response => {
         //select option
         response.data.forEach((value, index) => {
@@ -70,7 +78,7 @@ class CsCreator extends Component {
     const pKwSelectLists = [];
     this.setState({ FetchJiebaListState: false });
     axios
-      .get("/jieba?page=" + pageNumber)
+      .get("/jieba?page=" + pageNumber, { cancelToken: this.CancelToken.token })
       .then(response => {
         // 多選component
         response.data.forEach(value => {
@@ -99,6 +107,7 @@ class CsCreator extends Component {
     this.setState({
       CsAdd_SelectList: [],
       Pkw_MultipleList: [],
+      Pkw_SelectList: [],
       FetchJiebaListState: false,
       ArticlePreviewLoadingState: false
     });
