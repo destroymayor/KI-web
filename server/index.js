@@ -18,7 +18,7 @@ router(app);
 
 // socket.io config
 const server = require('http').Server(app);
-const SocketIO = require('socket.io')(server);
+const SocketIO = require('socket.io').listen(server);
 
 // Chat room to socket.io
 ChatRoom(SocketIO);

@@ -181,7 +181,8 @@ class CsCreator extends Component {
     <div className="CsCreator-AddItem">
       <p>pKw</p>
       <List
-        style={{ width: "100%", padding: 0, height: 300, overflow: "auto" }}
+      id="PkwMultipleItem"  
+        style={{ width: "100%", padding: 0, height: 300}}
         header={<p>多選pkw {this.state.FetchJiebaListState ? null : <Icon type="loading" />}</p>}
         bordered
         dataSource={this.state.Pkw_MultipleList}
@@ -215,7 +216,8 @@ class CsCreator extends Component {
     <div className="CsCreator-AddItem">
       <p>Cs</p>
       <List
-        style={{ width: "100%", height: 300, overflow: "auto" }}
+        id="CsCreatorList"
+        style={{ width: "100%", height: 300 }}
         header={<p>雙擊加入Cs {this.state.FetchJiebaListState ? null : <Icon type="loading" />}</p>}
         bordered
         dataSource={this.state.CsAdd_SelectList}

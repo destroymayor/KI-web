@@ -20,7 +20,7 @@ class ChatRoom extends Component {
 
     // socketIO config
     this.socket = SocketIOClient(
-      process.env.NODE_ENV === "production" ? "http://localhost:5000/" : "http://localhost:3000/"
+      process.env.NODE_ENV === "production" ? "http://localhost:5000" : "http://localhost:3000"
     );
   }
 

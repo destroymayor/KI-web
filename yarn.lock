@@ -2358,6 +2358,10 @@ nocache@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/nocache/-/nocache-2.0.0.tgz#202b48021a0c4cbde2df80de15a17443c8b43980"
 
+node-fixtures@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/node-fixtures/-/node-fixtures-0.0.1.tgz#6e2d53baf56b9e96ba628a5cb7589669ff6fea5e"
+
 node-pre-gyp@^0.6.39:
   version "0.6.39"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.6.39.tgz#c00e96860b23c0e1420ac7befc5044e1d78d8649"

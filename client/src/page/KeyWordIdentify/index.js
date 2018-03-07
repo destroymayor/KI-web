@@ -97,6 +97,7 @@ class KeyWordIdentify extends Component {
       FetchKeyWordHistoryDisabledState: true
     });
     const KwHistoryArray = [];
+
     axios
       .get("/keywordhistory", { cancelToken: this.CancelToken.token })
       .then(response => {
@@ -314,6 +315,10 @@ class KeyWordIdentify extends Component {
       ) : (
         <Icon type="loading" style={{ fontSize: 24 }} spin />
       )}
+      <div className="TableComponent">
+        {this.state.KwTotalLoadingState ? KwHistoryTable(this.state.KwTotal) : null}
+        {this.state.jiebaLoadingState ? JiebaTable(this.state.jiebaList) : null}
+      </div>
     </div>
   );
 
@@ -349,10 +354,6 @@ class KeyWordIdentify extends Component {
         <div className="SourceText">
           {this._renderSourceText()}
           {this._renderManualTagList()}
-        </div>
-        <div className="TableComponent">
-          {this.state.KwTotalLoadingState ? KwHistoryTable(this.state.KwTotal) : null}
-          {this.state.jiebaLoadingState ? JiebaTable(this.state.jiebaList) : null}
         </div>
       </div>
     );
