@@ -12,7 +12,7 @@ export default (app) => {
 
     Query('SELECT * FROM test.sourcetext')
       .then((rows) => {
-        console.log('jieba output \n', nodejieba.extract(rows[pages - 1].content, 20));
+        // console.log('jieba output \n', nodejieba.extract(rows[pages - 1].content, 20));
         res.json(nodejieba.extract(rows[pages - 1].content, 20));
       })
       .catch((error) => {
