@@ -181,8 +181,8 @@ class CsCreator extends Component {
     <div className="CsCreator-AddItem">
       <p>pKw</p>
       <List
-      id="PkwMultipleItem"  
-        style={{ width: "100%", padding: 0, height: 300}}
+        id="PkwMultipleItem"
+        style={{ width: "100%", padding: 0, height: 300 }}
         header={<p>多選pkw {this.state.FetchJiebaListState ? null : <Icon type="loading" />}</p>}
         bordered
         dataSource={this.state.Pkw_MultipleList}
@@ -202,9 +202,7 @@ class CsCreator extends Component {
               }}
             >
               {item}
-              {this.state.Pkw_SelectList.indexOf(item) === -1 ? null : (
-                <Icon style={{ color: "#2897ff" }} type="check" />
-              )}
+              {this.state.Pkw_SelectList.indexOf(item) === -1 ? null : <Icon style={{ color: "#2897ff" }} type="check" />}
             </Button>
           </List.Item>
         )}
@@ -305,9 +303,7 @@ class CsCreator extends Component {
                 <Button
                   onClick={() => {
                     this.setState({
-                      CsCreator_TotalItem: this.state.CsCreator_TotalItem.filter(
-                        item => item.Cs !== record.Cs
-                      )
+                      CsCreator_TotalItem: this.state.CsCreator_TotalItem.filter(item => item.Cs !== record.Cs)
                     });
                     this.state.CsAdd_SelectList.splice(record.index, 0, record.Cs);
                   }}

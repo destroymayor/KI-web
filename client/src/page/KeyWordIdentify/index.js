@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Icon, List, message, Spin, Select } from "antd";
+
+import { Icon, List, message, Spin, Select, Table } from "antd";
 
 import React, { Component } from "react";
 import "./index.css";
@@ -41,7 +42,19 @@ class KeyWordIdentify extends Component {
       KwTotalLoadingState: false,
       // 讀取歷史kw庫按鈕狀態
       FetchKeyWordHistoryDisabledState: true,
-      FetchKeyWordHistoryLoadingState: false
+      FetchKeyWordHistoryLoadingState: false,
+      ///////
+      TotalNumber: [],
+      TotalKey: [],
+      columns: [
+        { title: "keyword", width: 100, dataIndex: "word", key: "word", fixed: "left" },
+        {
+          title: "文章",
+          dataIndex: "value",
+          key: "value",
+          render: text => <span>{` ${text} `}</span>
+        }
+      ]
     };
 
     this.CancelToken = axios.CancelToken.source();
@@ -57,6 +70,8 @@ class KeyWordIdentify extends Component {
     }
   }
 
+  // fetch data //
+
   // 讀取sourceText庫資料
   FetchSourceText() {
     axios
@@ -68,8 +83,9 @@ class KeyWordIdentify extends Component {
               {index + 1}
             </Option>
           );
-        });
 
+          this.state.TotalNumber.push(parseInt(index + 1, 10));
+        });
         this.setState({
           // loading state
           SourceTextLoadingState: true,
@@ -88,8 +104,33 @@ class KeyWordIdentify extends Component {
       });
   }
 
+  mergeList(arr) {
+    const merged = arr.reduce((acc, obj) => {
+      if (acc[obj.word]) {
+        acc[obj.word].value = acc[obj.word].value.isArray ? acc[obj.word].value.concat(obj.value) : [acc[obj.word].value].concat(obj.value);
+      } else {
+        acc[obj.word] = obj;
+      }
+      return acc;
+    }, {});
+
+    let output = [];
+    for (let prop in merged) {
+      output.push(merged[prop]);
+    }
+  }
+
+  removeDuplicity(data) {
+    return data.filter((item, index, arr) => {
+      const c = arr.map(item => item.word);
+      return index === c.indexOf(item.word);
+    });
+  }
+
   // 讀取歷史kw庫資料
   FetchKeyWordHistory() {
+    this.mergeList(this.state.TotalKey);
+
     this.setState({
       // loading 讀取歷史kw庫按鈕
       FetchKeyWordHistoryLoadingState: true,
@@ -125,9 +166,7 @@ class KeyWordIdentify extends Component {
             // kw
             keyword: frequencyState ? null : value,
             // 出現頻率
-            frequency: frequencyState
-              ? null
-              : this.state.SourceText.match(new RegExp(value, "g") || []).length,
+            frequency: frequencyState ? null : this.state.SourceText.match(new RegExp(value, "g") || []).length,
             // 出現位置字元
             localtag: frequencyState ? null : this.state.SourceTextLocalTags.indexOf(value)
           });
@@ -181,6 +220,28 @@ class KeyWordIdentify extends Component {
       });
   }
 
+  FetchTotalKeywordList() {
+    this.state.TotalNumber.forEach((value, index) => {
+      axios
+        .get("/jieba?page=" + parseInt(index + 1, 10), { cancelToken: this.CancelToken.token })
+        .then(response => {
+          response.data.forEach(value => {
+            if (value.weight >= 70) {
+              this.state.TotalKey.push({
+                word: value.word,
+                value: parseInt(index + 1, 10)
+              });
+            }
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+  }
+
+  // fetch data //
+
   // handle 下拉組件
   HandleSelect = selectValue => {
     this.setState({
@@ -230,10 +291,7 @@ class KeyWordIdentify extends Component {
   // 復原Ur選取標記
   RemoveTextTagRange(item) {
     this.setState({
-      SourceText: this.state.SourceText.replace(
-        `<span style="background-color: rgb(234, 0, 0);">${item}</span>`,
-        item
-      )
+      SourceText: this.state.SourceText.replace(`<span style="background-color: rgb(234, 0, 0);">${item}</span>`, item)
     });
     this.setState({
       UrTagRecovery: this.state.UrTagRecovery.filter(val => val !== item),
@@ -259,6 +317,13 @@ class KeyWordIdentify extends Component {
 
   _renderBtnItem = () => (
     <div className="ButtonItem">
+      <Buttons
+        Type={"primary"}
+        Text={"test"}
+        onClick={() => {
+          this.FetchTotalKeywordList();
+        }}
+      />
       <Buttons
         Type={"primary"}
         Text={"讀取歷史Kw"}
@@ -291,7 +356,6 @@ class KeyWordIdentify extends Component {
       <Buttons
         Type={"primary"}
         Text={"復原全部標記"}
-        Icon={"reload"}
         disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
         onClick={() => {
           this.setState({
@@ -307,11 +371,7 @@ class KeyWordIdentify extends Component {
   _renderSourceText = () => (
     <div id="SourceTextItem">
       {this.state.SourceTextLoadingState ? (
-        <div
-          id="SourceTextContent"
-          onMouseUp={() => this.GetSelectedText()}
-          dangerouslySetInnerHTML={{ __html: this.state.SourceText }}
-        />
+        <div id="SourceTextContent" onMouseUp={() => this.GetSelectedText()} dangerouslySetInnerHTML={{ __html: this.state.SourceText }} />
       ) : (
         <Icon type="loading" style={{ fontSize: 24 }} spin />
       )}
@@ -351,6 +411,17 @@ class KeyWordIdentify extends Component {
         <Menu renderPage="Expert" />
         {this._renderSelectPageComponent()}
         {this._renderBtnItem()}
+        <div className="TotalKeywordTable">
+          <Table
+            bordered
+            id="TotalKeywordTable"
+            size={"small"}
+            pagination={false}
+            rowKey={key => key.word}
+            columns={this.state.columns}
+            dataSource={this.removeDuplicity(this.state.TotalKey)}
+          />
+        </div>
         <div className="SourceText">
           {this._renderSourceText()}
           {this._renderManualTagList()}
