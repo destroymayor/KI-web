@@ -7,17 +7,11 @@ import "./index.css";
 
 import history from "./RouterHistory";
 
-// 載入 Login
-import Login from "./Login/index";
-// 載入 ChatRoom
-import ChatRoom from "./Chat/index";
-// 載入 Keyword Identify page
-import KeyWordIdentify from "./KeyWordIdentify/index";
-// 載入CsCreator page
-import CsCreator from "./CsCreator/index";
-
-// 載入Not found page
-import Notfound from "./Notfound/index";
+import Login from "./Login/index"; // 載入 Login
+import ChatRoom from "./Chat/index"; // 載入 ChatRoom
+import KeyWordIdentify from "./KeyWordIdentify/index"; // 載入 Keyword Identify page
+import CsCreator from "./CsCreator/index"; // 載入CsCreator page
+import Notfound from "./Notfound/index"; // 載入Not found page
 
 class Routers extends Component {
   renderRoute = () => (

@@ -5,10 +5,9 @@ import React, { Component } from "react";
 import "./index.css";
 
 import Menu from "../../utils/Menu/index";
-// Select component option
-const Option = Select.Option;
-// Panel component option
-const Panel = Collapse.Panel;
+
+const Option = Select.Option; // Select component option
+const Panel = Collapse.Panel; // Panel component option
 
 class CsCreator extends Component {
   constructor(props) {
@@ -16,24 +15,16 @@ class CsCreator extends Component {
     this.state = {
       SourceTextSelectItem: [],
       SourceTextSelectedPlaceholder: "",
-      // Cs select多選 list
-      CsAdd_CustomizeSelectComponent: [],
+      CsAdd_CustomizeSelectComponent: [], // Cs select多選 list
       FetchJiebaListState: true,
-      // pKw List
-      Pkw_MultipleList: [],
-      // pkw 選擇後的list
-      Pkw_SelectList: [],
+      Pkw_MultipleList: [], // pKw List
+      Pkw_SelectList: [], // pkw 選擇後的list
       Pkw_SelectItemState: true,
-      // Cs Select Component option
-      CsAdd_SelectList: [],
-      // 選擇Cs-Lv
-      SelectCsLv: "",
-      //cs kw total item
-      CsCreator_TotalItem: [],
-      //table 添加至db的 button state
-      Cs_KwListToDataBaseBtnState: true,
-      // 選擇pkw時參看原文章
-      ArticlePreviewList: [],
+      CsAdd_SelectList: [], // Cs Select Component option
+      SelectCsLv: "", // 選擇Cs-Lv
+      CsCreator_TotalItem: [], //cs kw total item
+      Cs_KwListToDataBaseBtnState: true, //table 添加至db的 button state
+      ArticlePreviewList: [], // 選擇pkw時參看原文章
       ArticlePreview: "",
       ArticlePreviewLoadingState: false,
       ArticlePreviewRemoveTag: null
@@ -64,8 +55,7 @@ class CsCreator extends Component {
               {value.content}
             </Option>
           );
-          //參看原文章list
-          this.state.ArticlePreviewList.push(value.content);
+          this.state.ArticlePreviewList.push(value.content); //參看原文章list
         });
       })
       .catch(error => {
@@ -82,17 +72,13 @@ class CsCreator extends Component {
       .then(response => {
         // 多選component
         response.data.forEach(value => {
-          // Pkw MultipleList
-          this.state.Pkw_MultipleList.push(value.word);
-          //cs select list
-          this.state.CsAdd_SelectList.push(value.word);
+          this.state.Pkw_MultipleList.push(value.word); // Pkw MultipleList
+          this.state.CsAdd_SelectList.push(value.word); //cs select list
         });
         this.setState({
           FetchJiebaListState: true,
-          // pkw select list state
-          CsAdd_CustomizeSelectComponent: pKwSelectLists,
-          //參看原文章篇數
-          ArticlePreview: this.state.ArticlePreviewList[pageNumber - 1]
+          CsAdd_CustomizeSelectComponent: pKwSelectLists, // pkw select list state
+          ArticlePreview: this.state.ArticlePreviewList[pageNumber - 1] //參看原文章篇數
         });
       })
       .catch(error => {
@@ -152,8 +138,7 @@ class CsCreator extends Component {
     });
     this.setState({
       CsAdd_SelectList: this.state.CsAdd_SelectList.filter(val => val !== item),
-      // 清空已選的pkw list
-      Pkw_SelectList: [],
+      Pkw_SelectList: [], // 清空已選的pkw list
       Cs_KwListToDataBaseBtnState: false
     });
   };
@@ -271,8 +256,7 @@ class CsCreator extends Component {
                 className="CsCreator-SelectComponent"
                 labelInValue
                 onChange={text => {
-                  //合併object to Lv
-                  Object.assign(this.state.CsCreator_TotalItem[index], { Lv: text.key });
+                  Object.assign(this.state.CsCreator_TotalItem[index], { Lv: text.key });  //合併object to Lv
                 }}
               >
                 <Option key={"sX"}>{"sX"}</Option>
@@ -293,7 +277,7 @@ class CsCreator extends Component {
             dataIndex: "Kw",
             key: "Kw",
             width: 320,
-            render: (Kw, record) => <span>{`${Kw}`}</span>
+            render: Kw => <span>{`${Kw}`}</span>
           },
           {
             title: "編輯",

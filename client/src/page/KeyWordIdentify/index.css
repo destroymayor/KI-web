@@ -39,12 +39,8 @@
 }
 
 #TotalKeywordTable {
-  width: 800px;
-}
-
-#TotalKeywordTable td {
-  /* padding-left: 20px;
-  padding-right: 20px; */
+  width: 500px;
+  margin-left: 10px;
 }
 
 #ManualTag-List {

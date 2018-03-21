@@ -19,9 +19,7 @@ class ChatRoom extends Component {
     };
 
     // socketIO config
-    this.socket = SocketIOClient(
-      process.env.NODE_ENV === "production" ? "http://localhost:5000" : "http://localhost:3000"
-    );
+    this.socket = SocketIOClient(process.env.NODE_ENV === "production" ? "http://localhost:5000" : "http://localhost:3000");
   }
 
   componentDidMount() {
@@ -62,8 +60,7 @@ class ChatRoom extends Component {
   submitMessage = e => {
     e.preventDefault();
     if (this.message.value === "") return null;
-    // socket.io傳送訊息
-    this.socket.emit("SendMessage", { username: "User", content: this.message.value });
+    this.socket.emit("SendMessage", { username: "User", content: this.message.value }); // socket.io傳送訊息
     // 將訊息合併至list
     this.setState(
       {
