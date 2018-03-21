@@ -13,17 +13,13 @@ app.use(compression());
 app.use(helmet());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-// 載入router config
-router(app);
+router(app); // 載入router config
 
-// socket.io config
-const server = require('http').Server(app);
+const server = require('http').Server(app); // socket.io config
 const SocketIO = require('socket.io').listen(server);
 
-// Chat room to socket.io
-ChatRoom(SocketIO);
+ChatRoom(SocketIO); // Chat room to socket.io
 
-// 其他頁面導向index
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });

@@ -20,8 +20,7 @@ const Query = sql =>
       }
 
       return connection.query(sql, (error, rows) => {
-        // 釋放連接
-        connection.release();
+        connection.release(); // 釋放連接
         if (error) {
           console.log('query error', error);
           return reject(error);

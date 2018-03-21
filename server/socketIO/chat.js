@@ -1,7 +1,6 @@
 export default (io) => {
   // socket.io connection
   io.sockets.on('connection', (socket) => {
-    // 離線
     socket.on('disconnect', () => {
       console.log('socketIO 連線已斷開');
     });

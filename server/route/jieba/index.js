@@ -7,8 +7,7 @@ nodejieba.load(`${__dirname}./jieba_Dictionary/Jieba_TW.utf8`);
 
 export default (app) => {
   app.get('/jieba', (req, res) => {
-    // 文章參數
-    const pages = req.query.page;
+    const pages = req.query.page; // 文章參數
 
     Query('SELECT * FROM test.sourcetext')
       .then((rows) => {
