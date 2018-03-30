@@ -1,0 +1,65 @@
+$center: center;
+
+.Ki {
+  display: flex;
+  flex-direction: column;
+  justify-content: $center;
+}
+
+/* 下拉組件 */
+
+.SelectComponent {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* 按鈕item */
+
+.ButtonItem {
+  button {
+    margin: 10px;
+  }
+}
+
+/* tx庫 */
+
+.SourceText,
+.TotalKeywordTable {
+  display: flex;
+  justify-content: $center;
+  margin-top: 20px;
+}
+
+#SourceTextItem {
+  margin-left: 20px;
+  margin-right: 20px;
+  width: 70%;
+
+  #SourceTextContent {
+    background: rgb(240, 240, 240);
+    border-radius: 20px;
+    padding: 15px;
+  }
+  .TableComponent {
+    display: flex;
+    justify-content: $center;
+  }
+}
+
+#TotalKeywordTable {
+  width: 500px;
+  margin-left: 10px;
+}
+
+#ManualTag-List {
+  width: 30%;
+  height: 450px;
+  margin-right: 20px;
+  overflow: auto;
+
+  #ManualTag-ListItem {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+  }
+}

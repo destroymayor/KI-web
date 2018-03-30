@@ -6,24 +6,27 @@
   overflow: hidden;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
   margin-top: 10px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+}
 
 .ChatRoom h4 {
   background-color: transparent;
-  border-bottom: 1px solid #dbdbdb;
+  border-bottom: 1px solid rgb(219, 219, 219);
   color: #222222;
   margin: 0;
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: center; }
+  justify-content: center;
+}
 
 .chats {
   box-sizing: border-box;
   padding: 10px 20px;
   margin: 10px 0 0;
   height: 505px;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+}
 
 .chats .chat {
   background: rgba(169, 207, 233, 0.4);
@@ -35,28 +38,32 @@
   float: left;
   clear: both;
   margin: 10px 0;
-  max-width: 200px; }
+  max-width: 200px;
+}
 
 .chats .chat span {
-  color: #838383;
+  color: rgb(131, 131, 131);
   height: 20px;
   position: absolute;
   top: -20px;
-  left: -5px; }
+  left: -5px;
+}
 
 .chats .chat.right {
   float: right;
-  clear: both; }
+  clear: both;
+}
 
 .input {
   height: 45px;
   width: 100%;
   background-color: transparent;
-  border-top: 1px solid #dbdbdb;
+  border-top: 1px solid rgb(219, 219, 219);
   display: flex;
   flex-direction: row;
-  align-items: center; }
-  .input input[type="text"] {
+  align-items: center;
+
+  input[type="text"] {
     outline: 0;
     background: transparent;
     border: transparent;
@@ -66,9 +73,12 @@
     height: 100%;
     width: 280px;
     box-sizing: border-box;
-    font-size: 15px; }
-    .input input[type="text"]::placeholder {
-      color: #dddddd; }
+    font-size: 15px;
+    &::placeholder {
+      color: #dddddd;
+    }
+  }
+}
 
 .input input[type="submit"] {
   outline: 0;
@@ -80,8 +90,11 @@
   box-sizing: border-box;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s ease; }
-  .input input[type="submit"]:hover {
+  transition: all 0.3s ease;
+
+  &:hover {
     background: #2897ff;
     border: 1px solid #2897ff;
-    color: #ffffff; }
+    color: #ffffff;
+  }
+}

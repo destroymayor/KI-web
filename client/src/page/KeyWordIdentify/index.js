@@ -210,7 +210,6 @@ class KeyWordIdentify extends Component {
     <div className="SelectComponent">
       <div>選擇文章</div>
       <Select
-        className="KI_selectComponent"
         style={{ width: 300 }}
         labelInValue
         notFoundContent={<Spin size="small" />}
@@ -312,12 +311,12 @@ class KeyWordIdentify extends Component {
         {this._renderSelectPageComponent()}
         {this._renderBtnItem()}
         <div className="TotalKeywordTable">
+          <TotalKeyWord />
         </div>
         <div className="SourceText">
           {this._renderSourceText()}
           {this._renderManualTagList()}
         </div>
-        <TotalKeyWord />
       </div>
     );
   }

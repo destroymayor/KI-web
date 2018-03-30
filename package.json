@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "total": "nodemon --watch src --exec babel-watch ./total.js",
     "start": "nodemon --watch src --exec babel-watch ./server/index.js",
     "watch": "babel-watch ./server/index.js",
     "client": "cd client && yarn start",
     "build": "babel server --out-dir lib",
-    "pm2-start": "pm2 start ./server/index.js --interpreter ./node_modules/.bin/babel-node --name kiweb --watch"
+    "pm2-start":
+      "pm2 start ./server/index.js --interpreter ./node_modules/.bin/babel-node --name kiweb --watch"
   },
   "keywords": [],
   "author": "",

@@ -1,41 +1,52 @@
-@charset "UTF-8";
 .CsCreator-Index {
   display: flex;
   flex: 1;
   flex-direction: column;
   text-align: center;
-  justify-content: center; }
+  justify-content: center;
+}
 
 .CsCreator-IndexItem {
   display: flex;
   justify-content: center;
+
   /* left區塊 */
-  /* right區塊 */ }
-  .CsCreator-IndexItem .CsCreator-Item {
+  .CsCreator-Item {
     flex: 1;
     flex-direction: column;
-    margin: 10px; }
-  .CsCreator-IndexItem .CsCreator-ArticlePreviewComponent {
+    margin: 10px;
+  }
+
+  /* right區塊 */
+  .CsCreator-ArticlePreviewComponent {
     flex: 1;
-    margin: 10px 10px 0 0; }
+    margin: 10px 10px 0 0;
+  }
+}
 
 .CsCreator-Add {
   display: flex;
   justify-content: center;
-  align-items: center; }
-  .CsCreator-Add .CsCreator-AddItem {
+  align-items: center;
+
+  .CsCreator-AddItem {
     margin: 10px 10px 10px 10px;
-    width: 50%; }
+    width: 50%;
+  }
+}
 
 #CsCreatorList,
 #PkwMultipleItem {
   overflow-y: scroll;
-  overflow-x: hidden; }
+  overflow-x: hidden;
+}
 
 #CsCreator-CsItemButton {
   width: 100%;
-  border: 0px; }
+  border: 0px;
+}
 
 .CsCreator-ItemTableComponent {
   align-self: center;
-  margin: 10px 10px 0 10px; }
+  margin: 10px 10px 0 10px;
+}

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { unregister as unregisterServiceWorker } from './registerServiceWorker';
+import { unregister as unregisterServiceWorker } from "./registerServiceWorker";
 // import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 

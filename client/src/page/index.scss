@@ -1,0 +1,32 @@
+$color-white: #ffffff;
+$display-flex: flex;
+
+$center: center;
+
+.Index {
+  display: $display-flex;
+  flex-direction: column;
+  text-align: $center;
+  justify-content: $center;
+}
+
+.Index-header {
+  background-color: #222;
+  height: 70px;
+  padding: 20px;
+  color: $color-white;
+}
+
+.Index-title {
+  font-size: 1.5em;
+  color: $color-white;
+}
+
+.Index-intro {
+  font-size: large;
+}
+
+.Index-Content {
+  display: $display-flex;
+  justify-content: $center;
+}

@@ -4,17 +4,23 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
-    "antd": "3.3.0",
+    "antd": "3.3.3",
     "axios": "^0.18.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "node-sass-chokidar": "^1.2.2",
+    "npm-run-all": "^4.1.2",
+    "react": "16.3.0",
+    "react-dom": "16.3.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "^1.1.1",
     "socket.io-client": "^2.0.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build-css": "node-sass-chokidar src/ -o src/",
+    "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build-js": "react-scripts build",
+    "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "postbuild": "rimraf build/**/*.map"
