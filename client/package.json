@@ -12,7 +12,7 @@
     "react-dom": "16.3.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "^1.1.1",
-    "socket.io-client": "^2.0.4"
+    "socket.io-client": "2.1.0"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
@@ -27,9 +27,9 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
-    "eslint": "^4.18.1",
+    "eslint": "4.19.1",
     "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-import": "2.10.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0"
   }

@@ -1,9 +1,6 @@
 import axios from "axios";
-
 import { Input, InputNumber, Table } from "antd";
-
 import React, { Component } from "react";
-
 import Buttons from "../../utils/components/Buttons";
 
 class TotalKeyword extends Component {
@@ -27,12 +24,11 @@ class TotalKeyword extends Component {
     if (this.CancelToken) {
       this.CancelToken.cancel("KeywordIdentify Component Is Unmounting");
     }
-    clearInterval(this.renderList);
   }
 
   // fetch data //
-  FetchQA() {
-    axios.get("/totalkeyword_page", { cancelToken: this.CancelToken.token }).then(response => {
+  async FetchQA() {
+    await axios.get("/totalkeyword_page", { cancelToken: this.CancelToken.token }).then(response => {
       response.data.forEach((value, index) => {
         if (index <= this.state.NumberOfArticles) {
           this.state.TotalNumber_Question.push({ page: parseInt(index + 1, 10), content: value.q_title });
@@ -40,7 +36,7 @@ class TotalKeyword extends Component {
       });
     });
 
-    axios.get("/totalkeyword_page_answer", { cancelToken: this.CancelToken.token }).then(response => {
+    await axios.get("/totalkeyword_page_answer", { cancelToken: this.CancelToken.token }).then(response => {
       response.data.forEach((value, index) => {
         if (index <= this.state.NumberOfArticles) {
           this.state.TotalNumber_Answer.push({ page: parseInt(index + 1, 10), content: value.a_context });
@@ -49,8 +45,8 @@ class TotalKeyword extends Component {
     });
   }
 
-  FetchTotalKeywordList() {
-    this.state.TotalNumber_Question.forEach((value, index) => {
+  async FetchTotalKeywordList() {
+    await this.state.TotalNumber_Question.forEach((value, index) => {
       // question
       axios
         .get("/totalkeyword?page=" + parseInt(index + 1, 10), { cancelToken: this.CancelToken.token })
@@ -58,14 +54,12 @@ class TotalKeyword extends Component {
           response.data.forEach(value => {
             this.state.TotalKeyQuestion.push({
               word: value.word,
-              value: parseInt(index + 1, 10),
+              value: [parseInt(index + 1, 10)],
               weight: value.weight.toFixed(2)
             });
           });
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(err => {});
 
       //answer
       axios
@@ -74,14 +68,12 @@ class TotalKeyword extends Component {
           response.data.forEach(value => {
             this.state.TotalKeyAnswer.push({
               word: value.word,
-              value: parseInt(index + 1, 10),
+              value: [parseInt(index + 1, 10)],
               weight: value.weight.toFixed(2)
             });
           });
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(err => {});
     });
   }
 
@@ -91,16 +83,13 @@ class TotalKeyword extends Component {
     this.mergeList(this.state.TotalKeyQuestion);
     this.mergeList(this.state.TotalKeyAnswer);
 
-    // this.renderList = setInterval(() => {
-    //   console.log("render");
     this.setState({ FetchStartState: true });
-    // }, 1000);
   }
 
   mergeList(data) {
     const merged = data.reduce((acc, obj) => {
       if (acc[obj.word]) {
-        acc[obj.word].value = acc[obj.word].value.isArray ? acc[obj.word].value.concat(obj.value) : [acc[obj.word].value].concat(obj.value);
+        acc[obj.word].value = acc[obj.word].value ? acc[obj.word].value.concat(obj.value) : acc[obj.word].value.concat(obj.value);
       } else {
         acc[obj.word] = obj;
       }
@@ -116,12 +105,11 @@ class TotalKeyword extends Component {
   removeDuplicity(data) {
     return data.filter((item, index, arr) => {
       const c = arr.map(item => item.word);
-      return index === c.indexOf(item.word) && item.value instanceof Array;
+      return index === c.indexOf(item.word) && item.value.length !== 1;
     });
   }
 
   FilterKeyword(word, word2) {
-    console.log(word, word2);
     this.state.TotalNumber_Question.forEach(value => {
       if (value.content.search(word) !== -1 && value.content.search(word2) !== -1) {
         console.log("question =>", value.content);
@@ -151,15 +139,9 @@ class TotalKeyword extends Component {
           <Buttons
             Type={"primary"}
             Text={"Fetch QA"}
-            onClick={() => {
-              this.FetchQA();
-            }}
-          />
-          <Buttons
-            Type={"primary"}
-            Text={"start"}
-            onClick={() => {
-              this.FetchTotalKeywordList();
+            onClick={async () => {
+              await this.FetchQA();
+              await this.FetchTotalKeywordList();
             }}
           />
           <Buttons
@@ -197,6 +179,7 @@ class TotalKeyword extends Component {
             bordered
             id="TotalKeywordTable"
             size={"small"}
+            pagination={false}
             rowKey={key => key.word}
             scroll={{ y: 500 }}
             columns={[
@@ -220,6 +203,7 @@ class TotalKeyword extends Component {
             bordered
             id="TotalKeywordTable"
             size={"small"}
+            pagination={false}
             rowKey={key => key.word}
             scroll={{ y: 500 }}
             columns={[

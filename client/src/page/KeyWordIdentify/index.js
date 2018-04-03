@@ -310,12 +310,13 @@ class KeyWordIdentify extends Component {
         <Menu renderPage="Expert" />
         {this._renderSelectPageComponent()}
         {this._renderBtnItem()}
-        <div className="TotalKeywordTable">
-          <TotalKeyWord />
-        </div>
+
         <div className="SourceText">
           {this._renderSourceText()}
           {this._renderManualTagList()}
+        </div>
+        <div className="TotalKeywordTable">
+          <TotalKeyWord />
         </div>
       </div>
     );
