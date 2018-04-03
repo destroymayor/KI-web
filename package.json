@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "total": "nodemon --watch src --exec babel-watch ./total.js",
+    "total": "nodemon --watch src --exec babel-watch ./QA/total.js",
+    "QA": "nodemon --watch src --exec babel-watch ./QA/QA.js",
     "start": "nodemon --watch src --exec babel-watch ./server/index.js",
     "watch": "babel-watch ./server/index.js",
     "client": "cd client && yarn start",
@@ -18,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
+    "excel4node": "^1.3.6",
     "express": "^4.16.3",
     "helmet": "^3.12.0",
     "mysql": "^2.15.0",
