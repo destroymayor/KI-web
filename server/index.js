@@ -13,7 +13,7 @@ app.use(compression());
 app.use(helmet());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-router(app); // 載入router config
+router(app); // load router config
 
 const server = require('http').Server(app); // socket.io config
 const SocketIO = require('socket.io').listen(server);

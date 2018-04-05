@@ -10,11 +10,8 @@
     "watch": "babel-watch ./server/index.js",
     "client": "cd client && yarn start",
     "build": "babel server --out-dir lib",
-    "pm2-start":
-      "pm2 start ./server/index.js --interpreter ./node_modules/.bin/babel-node --name kiweb --watch"
+    "pm2-start": "pm2 start ./server/index.js --interpreter ./node_modules/.bin/babel-node --name kiweb --watch"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -34,7 +31,7 @@
     "babel-plugin-transform-es2015-parameters": "^6.24.1",
     "babel-plugin-transform-es2015-spread": "^6.22.0",
     "babel-plugin-transform-strict-mode": "^6.24.1",
-    "babel-watch": "^2.0.7",
+    "babel-watch": "2.0.7",
     "eslint": "^4.19.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
