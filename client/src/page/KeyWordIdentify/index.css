@@ -29,12 +29,16 @@
     border-radius: 20px;
     padding: 15px; }
   #SourceTextItem .TableComponent {
+    margin-top: 20px;
     display: flex;
     justify-content: center; }
+  #SourceTextItem .kwTable {
+    margin-right: 20px; }
 
 #TotalKeywordTable {
   width: 500px;
-  margin-left: 10px; }
+  margin-left: 10px;
+  margin-bottom: 10px; }
 
 #ManualTag-List {
   width: 30%;

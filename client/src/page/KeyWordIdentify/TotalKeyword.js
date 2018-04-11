@@ -1,9 +1,9 @@
 import axios from "axios";
 import { Input, InputNumber, Table } from "antd";
-import React, { Component } from "react";
+import React from "react";
 import Buttons from "../../utils/components/Buttons";
 
-class TotalKeyword extends Component {
+class TotalKeyword extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

@@ -1,21 +1,22 @@
 module.exports = {
-  extends: 'airbnb-base',
   parserOptions: {
     ecmaVersion: 2017,
-    sourceType: 'module',
+    sourceType: "module",
     ecmaFeatures: {
       globalReturn: true,
       impliedStrict: true,
-    },
+      modules: true,
+      experimentalObjectRestSpread: true
+    }
   },
   rules: {
-    'no-inner-declarations': [2, 'functions'],
-    'no-unused-vars': 'warn',
-    'no-unexpected-multiline': 'warn',
-    'no-console': 'off',
+    "no-inner-declarations": [2, "functions"],
+    "no-unused-vars": "warn",
+    "no-unexpected-multiline": "warn",
+    "no-console": "off"
   },
   env: {
     browser: true,
-    node: true,
-  },
+    node: true
+  }
 };

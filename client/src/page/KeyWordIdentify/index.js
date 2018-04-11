@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { Icon, List, message, Spin, Select } from "antd";
 
-import React, { Component } from "react";
+import React from "react";
 import "./index.css";
 
 import Menu from "../../utils/Menu/index";
@@ -12,7 +12,7 @@ import TotalKeyWord from "./TotalKeyword";
 
 const Option = Select.Option; // Select component option
 
-class KeyWordIdentify extends Component {
+class KeyWordIdentify extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -270,7 +270,11 @@ class KeyWordIdentify extends Component {
   _renderSourceText = () => (
     <div id="SourceTextItem">
       {this.state.SourceTextLoadingState ? (
-        <div id="SourceTextContent" onMouseUp={() => this.GetSelectedText()} dangerouslySetInnerHTML={{ __html: this.state.SourceText }} />
+        <div
+          id="SourceTextContent"
+          onMouseUp={() => this.GetSelectedText()}
+          dangerouslySetInnerHTML={{ __html: this.state.SourceText }}
+        />
       ) : (
         <Icon type="loading" style={{ fontSize: 24 }} spin />
       )}
@@ -310,7 +314,6 @@ class KeyWordIdentify extends Component {
         <Menu renderPage="Expert" />
         {this._renderSelectPageComponent()}
         {this._renderBtnItem()}
-
         <div className="SourceText">
           {this._renderSourceText()}
           {this._renderManualTagList()}

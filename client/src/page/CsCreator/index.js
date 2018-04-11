@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Button, Collapse, List, Icon, Select, message, Spin, Popover, Table } from "antd";
 
-import React, { Component } from "react";
+import React from "react";
 import "./index.css";
 
 import Menu from "../../utils/Menu/index";
@@ -9,7 +9,7 @@ import Menu from "../../utils/Menu/index";
 const Option = Select.Option; // Select component option
 const Panel = Collapse.Panel; // Panel component option
 
-class CsCreator extends Component {
+class CsCreator extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -256,7 +256,7 @@ class CsCreator extends Component {
                 className="CsCreator-SelectComponent"
                 labelInValue
                 onChange={text => {
-                  Object.assign(this.state.CsCreator_TotalItem[index], { Lv: text.key });  //合併object to Lv
+                  Object.assign(this.state.CsCreator_TotalItem[index], { Lv: text.key }); //合併object to Lv
                 }}
               >
                 <Option key={"sX"}>{"sX"}</Option>

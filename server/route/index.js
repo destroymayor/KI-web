@@ -1,12 +1,14 @@
-import SourceText from './sourceText/index';
+import SourceText from "./sourceText/index";
 
-import KeywordHistory from './keywordhistory/index';
-import Jieba from './jieba/index';
+import KeywordHistory from "./keywordhistory/index";
+import Jieba from "./jieba/index";
 
-import totalkeyword from './totalkeyword/index';
+import totalkeyword from "./totalkeyword/index";
 
-export default (app) => {
-  [SourceText, KeywordHistory, Jieba, totalkeyword].forEach((router) => {
+import pdf2txt from "./pdf2text/index";
+
+export default app => {
+  [SourceText, KeywordHistory, Jieba, totalkeyword, pdf2txt].forEach(router => {
     router(app);
   });
 };

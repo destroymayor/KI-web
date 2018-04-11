@@ -41,14 +41,19 @@ $center: center;
     padding: 15px;
   }
   .TableComponent {
+    margin-top: 20px;
     display: flex;
     justify-content: $center;
+  }
+  .kwTable {
+    margin-right: 20px;
   }
 }
 
 #TotalKeywordTable {
   width: 500px;
   margin-left: 10px;
+  margin-bottom: 10px;
 }
 
 #ManualTag-List {

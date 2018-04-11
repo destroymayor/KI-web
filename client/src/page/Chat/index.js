@@ -1,12 +1,12 @@
 // 載入socket.io client庫
 import SocketIOClient from "socket.io-client";
 
-import React, { Component } from "react";
+import React from "react";
 import "./index.css";
 
 import HandleMessage from "./handleMessage";
 
-class ChatRoom extends Component {
+class ChatRoom extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

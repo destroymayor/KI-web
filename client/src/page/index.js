@@ -13,6 +13,8 @@ import KeyWordIdentify from "./KeyWordIdentify/index"; // 載入 Keyword Identif
 import CsCreator from "./CsCreator/index"; // 載入CsCreator page
 import Notfound from "./Notfound/index"; // 載入Not found page
 
+import Pdf2text from "./pdf2text/index";
+
 class Routers extends Component {
   renderRoute = () => (
     <div className="Index-Content">
@@ -21,6 +23,7 @@ class Routers extends Component {
         <Route path="/Chat" component={ChatRoom} />
         <Route path="/KeywordIdentify" component={KeyWordIdentify} />
         <Route path="/CsCreator" component={CsCreator} />
+        <Pdf2text path="/pdf2text" component={CsCreator} />
         <Route component={() => <Notfound NotfoundText="您訪問的頁面不存在" />} />
       </Switch>
     </div>
