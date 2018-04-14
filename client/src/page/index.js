@@ -10,7 +10,7 @@ import RouterManger from "./RouterManager";
 
 class Routers extends Component {
   renderRoute = () => (
-    <div className="Index-Content">
+    <React.Fragment>
       <Switch>
         <Route exact path="/" component={RouterManger.Login} />
         <Route path="/Chat" component={RouterManger.ChatRoom} />
@@ -19,7 +19,7 @@ class Routers extends Component {
         <Route path="/pdf2text" component={RouterManger.Pdf2text} />
         <Route component={() => <RouterManger.Notfound NotfoundText="您訪問的頁面不存在" />} />
       </Switch>
-    </div>
+    </React.Fragment>
   );
 
   render() {

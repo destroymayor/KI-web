@@ -12,7 +12,6 @@
     "build": "babel server --out-dir lib",
     "pm2-start": "pm2 start ./server/index.js --interpreter ./node_modules/.bin/babel-node --name kiweb --watch"
   },
-  "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
