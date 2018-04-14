@@ -6,7 +6,7 @@
   "scripts": {
     "total": "nodemon --watch src --exec babel-watch ./QA/total.js",
     "QA": "nodemon --watch src --exec babel-watch ./QA/QA.js",
-    "start": "nodemon --watch src --exec babel-watch ./server/index.js",
+    "dev": "nodemon --watch src --exec babel-watch ./server/index.js",
     "watch": "babel-watch ./server/index.js",
     "client": "cd client && yarn start",
     "build": "babel server --out-dir lib",

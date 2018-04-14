@@ -4,7 +4,7 @@ import SocketIOClient from "socket.io-client";
 import React from "react";
 import "./index.css";
 
-import HandleMessage from "./handleMessage";
+import HandleMessage from "./components/handleMessage";
 
 class ChatRoom extends React.PureComponent {
   constructor(props) {

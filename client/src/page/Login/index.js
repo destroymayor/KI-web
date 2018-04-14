@@ -1,17 +1,17 @@
 import { Button, Form, Input, Icon, Select } from "antd";
 
-import React, { Component } from "react";
+import React from "react";
 import "./index.css";
 import history from "../RouterHistory";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-function hasErrors(fieldsError) {
+const hasErrors = fieldsError => {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
+};
 
-class Login extends Component {
+class Login extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,20 +71,12 @@ class Login extends Component {
           <FormItem validateStatus={userNameError ? "error" : ""} help={userNameError || ""}>
             {getFieldDecorator("userName", {
               rules: [{ required: true, message: "請輸入你的帳號!" }]
-            })(
-              <Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="帳號" />
-            )}
+            })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="帳號" />)}
           </FormItem>
           <FormItem validateStatus={passwordError ? "error" : ""} help={passwordError || ""}>
             {getFieldDecorator("password", {
               rules: [{ required: true, message: "請輸入你的密碼!" }]
-            })(
-              <Input
-                prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
-                type="password"
-                placeholder="密碼"
-              />
-            )}
+            })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="密碼" />)}
           </FormItem>
           <FormItem>
             <Button htmlType="submit" disabled={hasErrors(getFieldsError())}>

@@ -7,9 +7,11 @@ class Pdf2txt extends React.PureComponent {
   state = {
     pdfText: ""
   };
+
   handleUploadFile = event => {
     const data = new FormData();
     data.append("pdf", event.target.files[0]);
+
     axios.post("/pdf2txt", data).then(response => {
       this.setState({
         pdfText: response.data.output

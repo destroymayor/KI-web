@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Input, InputNumber, Table } from "antd";
 import React from "react";
-import Buttons from "../../utils/components/Buttons";
+import Buttons from "../../../utils/components/Buttons";
 
 class TotalKeyword extends React.PureComponent {
   constructor(props) {

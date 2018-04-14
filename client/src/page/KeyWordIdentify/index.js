@@ -7,8 +7,8 @@ import "./index.css";
 
 import Menu from "../../utils/Menu/index";
 import Buttons from "../../utils/components/Buttons";
-import { KwHistoryTable, JiebaTable } from "./component/Table";
-import TotalKeyWord from "./TotalKeyword";
+import { KwHistoryTable, JiebaTable } from "./components/Table";
+import TotalKeyWord from "./components/TotalKeyword";
 
 const Option = Select.Option; // Select component option
 
