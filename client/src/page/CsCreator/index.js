@@ -75,11 +75,11 @@ class CsCreator extends React.PureComponent {
           this.state.Pkw_MultipleList.push(value.word); // Pkw MultipleList
           this.state.CsAdd_SelectList.push(value.word); //cs select list
         });
-        this.setState({
+        this.setState(state => ({
           FetchJiebaListState: true,
           CsAdd_CustomizeSelectComponent: pKwSelectLists, // pkw select list state
-          ArticlePreview: this.state.ArticlePreviewList[pageNumber - 1] //參看原文章篇數
-        });
+          ArticlePreview: state.ArticlePreviewList[pageNumber - 1] //參看原文章篇數
+        }));
       })
       .catch(error => {
         console.log("fetch jieba list", error);
@@ -102,11 +102,11 @@ class CsCreator extends React.PureComponent {
 
   // pkw multiple add or remove
   handlePkwMultiple = item => {
-    this.setState({ Pkw_SelectItemState: !this.state.Pkw_SelectItemState });
+    this.setState(state => ({ Pkw_SelectItemState: !state.Pkw_SelectItemState }));
     return this.state.Pkw_SelectList.indexOf(item) !== -1
-      ? this.setState({
-          Pkw_SelectList: this.state.Pkw_SelectList.filter(val => val !== item)
-        })
+      ? this.setState(state => ({
+          Pkw_SelectList: state.Pkw_SelectList.filter(val => val !== item)
+        }))
       : this.state.Pkw_SelectList.push(item);
   };
 
@@ -114,10 +114,10 @@ class CsCreator extends React.PureComponent {
   ArticlePreviewTagColor(value) {
     const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
     if (this.state.ArticlePreview.search(TagStyle) === -1) {
-      this.setState({
-        ArticlePreview: this.state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle),
+      this.setState(state => ({
+        ArticlePreview: state.ArticlePreview.replace(new RegExp(value, "g"), TagStyle),
         ArticlePreviewLoadingState: true
-      });
+      }));
     }
   }
 
@@ -125,7 +125,7 @@ class CsCreator extends React.PureComponent {
   ArticlePreviewRemoveTagColor(value) {
     const TagStyle = `<em style="background-color:#2897ff;">${value}</em>`;
     if (this.state.ArticlePreview.search(TagStyle) !== -1) {
-      this.setState({ ArticlePreview: this.state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value) });
+      this.setState(state => ({ ArticlePreview: state.ArticlePreview.replace(new RegExp(TagStyle, "g"), value) }));
     }
   }
 
@@ -136,11 +136,11 @@ class CsCreator extends React.PureComponent {
       Cs: item,
       Kw: this.state.Pkw_SelectList
     });
-    this.setState({
-      CsAdd_SelectList: this.state.CsAdd_SelectList.filter(val => val !== item),
+    this.setState(state => ({
+      CsAdd_SelectList: state.CsAdd_SelectList.filter(val => val !== item),
       Pkw_SelectList: [], // 清空已選的pkw list
       Cs_KwListToDataBaseBtnState: false
-    });
+    }));
   };
 
   // handle event //
@@ -286,9 +286,9 @@ class CsCreator extends React.PureComponent {
               this.state.CsCreator_TotalItem.length > 0 ? (
                 <Button
                   onClick={() => {
-                    this.setState({
-                      CsCreator_TotalItem: this.state.CsCreator_TotalItem.filter(item => item.Cs !== record.Cs)
-                    });
+                    this.setState(state => ({
+                      CsCreator_TotalItem: state.CsCreator_TotalItem.filter(item => item.Cs !== record.Cs)
+                    }));
                     this.state.CsAdd_SelectList.splice(record.index, 0, record.Cs);
                   }}
                   shape="circle"

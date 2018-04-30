@@ -12,7 +12,8 @@ const total = {
 const Question = () => {
   Query('SELECT * FROM test.question')
     .then((rows) => {
-      for (let i = 1; i < 1600; ++i) {
+      console.log(rows);
+      for (let i = 1; i < 1600; i += 1) {
         nodejieba.extract(rows[i].q_title, 20).map((value, index) =>
           total.table.push({
             keyword: value.word,
@@ -20,7 +21,7 @@ const Question = () => {
             value: [i],
           }));
       }
-      fs.writeFile('./QA/question_page.json', JSON.stringify(total), (err) => {});
+      // fs.writeFile('./QA/question_page.json', JSON.stringify(total), (err) => {});
     })
     .catch((error) => {
       console.log(error);

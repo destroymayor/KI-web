@@ -90,15 +90,15 @@ class KeyWordIdentify extends React.PureComponent {
           KwHistoryArray.push(value.name);
         });
 
-        this.setState({
+        this.setState(state => ({
           KwHistory: KwHistoryArray, // 儲存kw歷史庫
-          SourceText: this.state.SourceText.replace(
+          SourceText: state.SourceText.replace(
             // 讀取歷史kw庫並標出顏色(綠色)
             new RegExp(KwHistoryArray.join("|"), "g"),
             val => `<em style="color:#00A600;">${val}</em>`
           ),
           KwTotalLoadingState: true // render keyword table view
-        });
+        }));
 
         // kw頻率及位置
         this.state.KwHistory.forEach((value, index) => {
@@ -112,12 +112,12 @@ class KeyWordIdentify extends React.PureComponent {
         });
 
         // 過濾null值
-        this.setState({
-          KwTotal: this.state.KwTotal.filter(value => {
+        this.setState(state => ({
+          KwTotal: state.KwTotal.filter(value => {
             return value.keyword !== null;
           }),
           FetchKeyWordHistoryLoadingState: false // loading 讀取歷史kw庫按鈕
-        });
+        }));
       })
       .catch(error => {
         console.log("fetch keyword history error", error);
@@ -139,14 +139,14 @@ class KeyWordIdentify extends React.PureComponent {
         });
 
         // source tx 標記jieba顏色
-        this.setState({
-          SourceText: this.state.SourceText.replace(
+        this.setState(state => ({
+          SourceText: state.SourceText.replace(
             new RegExp(JiebaListArray.join("|"), "g"),
             val => `<em style="color:#2897ff;">${val}</em>`
-          )
-        });
-
-        this.setState({ jiebaLoadingState: true, FetchjiebaListLoadingState: false }); // render jieba table view
+          ),
+          jiebaLoadingState: true, // render jieba table view
+          FetchjiebaListLoadingState: false // render jieba table view
+        }));
       })
       .catch(error => {
         this.setState({ FetchjiebaListLoadingState: false });
@@ -186,24 +186,22 @@ class KeyWordIdentify extends React.PureComponent {
       this.state.GetSelectedTextList.push(Selection.toString());
 
       this.state.UrTagRecovery.push(Selection.toString()); // 復原標記 list
-      this.setState({
-        SourceText: this.state.SourceText.replace(
+      this.setState(state => ({
+        SourceText: state.SourceText.replace(
           Selection.toString(),
           `<span style="background-color: rgb(234, 0, 0);">${Selection.toString()}</span>`
         )
-      });
+      }));
     }
   }
 
   // 復原Ur選取標記
   RemoveTextTagRange(item) {
-    this.setState({
-      SourceText: this.state.SourceText.replace(`<span style="background-color: rgb(234, 0, 0);">${item}</span>`, item)
-    });
-    this.setState({
-      UrTagRecovery: this.state.UrTagRecovery.filter(val => val !== item),
-      GetSelectedTextList: this.state.GetSelectedTextList.filter(val => val !== item)
-    });
+    this.setState(state => ({
+      SourceText: state.SourceText.replace(`<span style="background-color: rgb(234, 0, 0);">${item}</span>`, item),
+      UrTagRecovery: state.UrTagRecovery.filter(val => val !== item),
+      GetSelectedTextList: state.GetSelectedTextList.filter(val => val !== item)
+    }));
   }
 
   _renderSelectPageComponent = () => (
@@ -257,11 +255,11 @@ class KeyWordIdentify extends React.PureComponent {
         Text={"復原全部標記"}
         disabled={this.state.UrTagRecovery.length !== 0 ? false : true}
         onClick={() => {
-          this.setState({
-            SourceText: this.state.SourceText.replace(/<\/?span[^>]*>/g, ""),
+          this.setState(state => ({
+            SourceText: state.SourceText.replace(/<\/?span[^>]*>/g, ""),
             GetSelectedTextList: [],
             UrTagRecovery: []
-          });
+          }));
         }}
       />
     </div>
