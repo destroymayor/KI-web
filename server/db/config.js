@@ -1,28 +1,28 @@
-import mysql from 'mysql';
+import mysql from "mysql";
 
 const pool = mysql.createPool({
-  host: '140.125.84.195',
-  user: 'root',
-  password: 'mismb207',
-  database: 'chain_sea',
+  host: "",
+  user: "",
+  password: "",
+  database: "",
   port: 3306,
   connectionLimit: 30,
   connectTimeout: 20000,
-  acquireTimeout: 20000,
+  acquireTimeout: 20000
 });
 
 const Query = sql =>
   new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
       if (err) {
-        console.log('pool getConnection error');
+        console.log("pool getConnection error");
         return reject(err);
       }
 
       return connection.query(sql, (error, rows) => {
         connection.release(); // 釋放連接
         if (error) {
-          console.log('query error', error);
+          console.log("query error", error);
           return reject(error);
         }
 
@@ -35,7 +35,7 @@ const Query = sql =>
 
 const Close = () =>
   new Promise((resolve, reject) => {
-    pool.end((err) => {
+    pool.end(err => {
       if (err) return reject(err);
       return resolve();
     });

@@ -13,7 +13,7 @@ export default app => {
 
       pdfParser.on("pdfParser_dataError", errData => console.error(errData.parserError));
       pdfParser.on("pdfParser_dataReady", pdfData => {
-        fs.writeFile("./M10623015.txt", pdfParser.getRawTextContent());
+        fs.writeFile("./simple.txt", pdfParser.getRawTextContent());
         res.json({ output: pdfParser.getRawTextContent() });
       });
       pdfParser.loadPDF(tempPath);
